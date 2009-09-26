@@ -118,7 +118,6 @@ sub parse {
             @{$result}{ (@fspell, @fheal_wlk) } = @col;
     } else {
 	    @{$result}{ (@fspell, @fheal_wlk32) } = @col; 
-	    if ($col[5]>0) {warn "absorb @col";}
 	}
     } elsif(
         $action == SPELL_PERIODIC_DRAIN ||
