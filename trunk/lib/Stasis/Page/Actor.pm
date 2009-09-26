@@ -246,7 +246,12 @@ sub page {
         my $n = $self->{index}->actorname($MOB);
         $r =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
         $n =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
-        push @summaryRows, "Armory" => "<a href=\"http://www.wowarmory.com/character-sheet.xml?r=$r&n=$n\" target=\"swsar_$n\">$displayName &#187;</a>";
+		my $reg='www';
+		#use region information if set (e.g. eu armory)
+		if ($self->{region}) {
+			$reg = $self->{region};
+		}
+		push @summaryRows, "Armory" => "<a href=\"http://$reg.wowarmory.com/character-sheet.xml?r=$r&n=$n\" target=\"swsar_$n\">$displayName &#187;</a>";
     }
     
     # Presence

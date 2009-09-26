@@ -38,6 +38,7 @@ my @fmiss       = qw/misstype amount/;
 my @fspellname  = qw/spellname/;
 my @fheal       = qw/amount critical/;
 my @fheal_wlk   = qw/amount extraamount critical/;
+my @fheal_wlk32 = qw/amount extraamount absorption critical/;
 my @fenergize   = qw/amount powertype extraamount/;
 my @faura       = qw/auratype amount/;
 my @fenv        = qw/environmentaltype/;
@@ -45,10 +46,10 @@ my @fenv        = qw/environmentaltype/;
 # Returns compact hashes for v2 logs.
 sub parse {
     my ($self, $line) = @_;
-    
     # Pull the stamp out.
     my ($t, @col) = $self->_split( $line );
-    if( !$t || @col < 7 ) {
+
+	if( !$t || @col < 7 ) {
         return {
             action              => 0,
             actor               => 0,
@@ -59,9 +60,10 @@ sub parse {
             target_relationship => 0,
         };
     }
-    
+
     # Common processing
     my $action = $action_map{ shift @col };
+
     my $result = {
         action              => $action,
         actor               => shift @col,
@@ -72,13 +74,13 @@ sub parse {
         target_relationship => hex shift @col,
         t                   => $t,
     };
-    
+
     $result->{target} = 0 if $result->{target} eq "0x0000000000000000";
     $result->{actor}  = 0 if $result->{actor}  eq "0x0000000000000000";
     
     # _split sometimes puts an extra quote mark in the last column
     $col[$#col] =~ s/"$// if @col;
-    
+
     # Action specific processing
     if( $action == SWING_DAMAGE ) {
         if( @col <= 8 ) {
@@ -112,9 +114,12 @@ sub parse {
     } elsif( $action == SPELL_HEAL || $action == SPELL_PERIODIC_HEAL ) {
         if( @col <= 5 ) {
             @{$result}{ (@fspell, @fheal) } = @col;
-        } else {
+	} elsif (@col == 6) {
             @{$result}{ (@fspell, @fheal_wlk) } = @col;
-        }
+    } else {
+	    @{$result}{ (@fspell, @fheal_wlk32) } = @col; 
+	    if ($col[5]>0) {warn "absorb @col";}
+	}
     } elsif(
         $action == SPELL_PERIODIC_DRAIN ||
         $action == SPELL_PERIODIC_LEECH ||
@@ -171,7 +176,6 @@ my $csv_regex = qr{"?,(?=".*?"(?:,|$)|[^",]+(?:,|$))"?};
 
 sub _split {
     my ( $self, $line ) = @_;
-
     if( $line =~ $stamp_regex ) {
         return POSIX::mktime(
             $5,                      # sec

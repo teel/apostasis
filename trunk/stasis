@@ -79,8 +79,11 @@ B<-dir>       Specifies in which directory the generated HTML is living
            current directory.
            
 B<-server>    If present, Armory links will be included using this server.
-           Only works with the US armory for now.
 
+B<-region>    If present, sets the prefix to the armory address. 
+           -region=eu will make the parsed logs link to the 
+           eu.wowarmory.com site, for example.
+	       
 B<-version>   Either 1 or 2. Pre-2.4 combatlogs should be parsed with
            version = 1, post-2.4 combatlogs with 2. Default is '2',
            the new post-2.4 style.
@@ -158,6 +161,7 @@ my $opt_year;
 my $opt_trash;
 my $opt_overall;
 my $opt_combine;
+my $opt_region;
 my $opt_server;
 my $opt_collapse;
 my $opt_tail;
@@ -291,6 +295,7 @@ my $rc = GetOptions(
     "overall"       => \$opt_overall,
     "combine"       => \$opt_combine,
     "server=s"      => \$opt_server,
+    "region=s"      => \$opt_region,
     "collapse"      => \$opt_collapse,
     "tail"          => \$opt_tail,
     "navigation"    => \$opt_nav,
@@ -302,6 +307,7 @@ my $rc = GetOptions(
 );
 
 setlocale( LC_ALL, $opt_locale ) if $opt_locale;
+
 
 # nav always on
 $opt_nav = 1;
@@ -424,6 +430,7 @@ if( $action eq "print" ) {
     my $writer = Stasis::CLI::Writer->new(
         base     => $opt_dir,
         server   => $opt_server,
+        region   => $opt_region,
         template => $opt_template,
         debug    => $opt_debug,
         fork     => $opt_fork
