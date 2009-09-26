@@ -1,4 +1,4 @@
-# Quick Start guide for Windows 
+#summary Quick Start guide for Windows
 
 =QuickStartWindows=
 'Instructions to get you going on Windows, as written by gianmerlino, edited for repository name'
