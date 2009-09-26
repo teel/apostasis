@@ -823,7 +823,15 @@ our @fingerprints = (
     mobEnd => [ 33993 ],
     timeout => 30,
 },
-
+{
+    short => "koralon",
+    zone => "archavon",
+    long => "Koralon",
+    mobStart => [ 35013 ],
+    mobContinue => [ 35013 ],
+    mobEnd => [ 35013 ],
+    timeout => 30,
+},
 {
     short => "malygos",
     zone => "eyeofeternity",
