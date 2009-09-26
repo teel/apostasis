@@ -1,7 +1,5 @@
 #summary StasisCL quick start guide for Unix-like systems
 
-= Quick Start =
-
 _Instructions to get you going on a Unix-like system_
 _as originally written by gianmerlino, with minor changes for the repository change_
 
