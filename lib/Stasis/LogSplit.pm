@@ -52,6 +52,8 @@ our %zones = (
     "archavon" => "Vault of Archavon",
     "eyeofeternity" => "The Eye of Eternity",
     "ulduar" => "Ulduar",
+    "coliseum" => "Crusaders' Coliseum",
+    "onyxia" => "Onyxia's Lair",
 );
 
 # Fingerprints of various boss encounters.
@@ -831,7 +833,56 @@ our @fingerprints = (
     mobEnd => [ 28859 ],
     timeout => 50,
 },
-
+{
+    short       => "northrendbeasts",
+    zone        => "coliseum",
+    long        => "Northrend Beasts",
+    mobStart    => [ 34796 ],
+    mobContinue => [ 34796, 34800, 35176, 34854, 34799, 35144, 34797 ],
+    mobEnd      => [ 34797 ],
+    timeout     => 30,
+},
+{
+    short       => "lordjaraxxus",
+    zone        => "coliseum",
+    long        => "Lord Jaraxxus",
+    mobStart    => [ 34780 ],
+    mobContinue => [ 34780, 34815, 34826 ],
+    mobEnd      => [ 34780 ],
+    timeout     => 30,
+},
+{
+    short       => "factionchampions",
+    zone        => "coliseum",
+    long        => "Faction Champions",
+    mobStart    => [ 34441, 34444, 34445, 34447, 34448, 34449, 34450, 34451, 34453, 
+34454, 34455, 34456, 34458, 34459, 34460, 34461, 34463, 34465, 34466, 34467, 34468, 
+34469, 34470, 34471, 34472, 34473, 34474, 34475  ],    
+    mobContinue => [ 34441, 34444, 34445, 34447, 34448, 34449, 34450, 34451, 34453, 
+34454, 34455, 34456, 34458, 34459, 34460, 34461, 34463, 34465, 34466, 34467, 34468, 
+34469, 34470, 34471, 34472, 34473, 34474, 34475  ],
+    timeout     => 30,
+},
+{
+    short       => "twinvalkyrs",
+    zone        => "coliseum",
+    long        => "Twin Valkyrs",
+    mobStart    => [ 34496, 34497 ],
+    mobContinue => [ 34496, 34497 ],
+    mobEnd      => [ 34496, 34497],
+    timeout     => 30,
+    endAll      => 1,
+},
+{
+   short       => "anubarak",
+   zone        => "coliseum",
+   long        => "Anub'arak",
+   mobStart    => [ 34564 ],
+   mobContinue => [ 34564, 34605, 34606, 34607 ],
+   mobEnd      => [ 34564 ],
+   timeout     => 30,
+   endAll      => 1,
+},
 ##################
 # TARGET DUMMIES #
 ##################
@@ -1002,12 +1053,19 @@ our @fingerprints = (
     zone        => "ulduar",
     long        => "Algalon the Observer",
     mobStart    => [ 32871 ],
-    mobContinue => [ 32871, 32953, 32955, 33089, 33052 ],
+    mobContinue => [ 32955, 33052, 33089 ],
     mobEnd      => [ 32871 ],
-    endFriendly => 1,
-    timeout     => 50,
+    timeout     => 30,
 },
-
+{
+    short => "onyxia",
+    zone => "onyxia",
+    long => "Onyxia",
+    mobStart => [10184],
+    mobContinue => [10184,11262,36561],
+    mobEnd => [10184],
+    timeout => 30,
+},
 );
 
 # Create and invert the %hfingerprints hash.
