@@ -1,7 +1,7 @@
 #summary Quick Start guide for Windows
 
 =QuickStartWindows=
-'Instructions to get you going on Windows, as written by gianmerlino, edited for repository name'
+_Instructions to get you going on Windows, as written by gianmerlino, edited for repository name_
 
 I don't have access to a Windows machine for testing, but these instructions are adapted from the Unix-like version at QuickStart based on contributions from mutagen on the elitist jerks forum. If they don't work please let me know because that means I wrote them down incorrectly.
 
