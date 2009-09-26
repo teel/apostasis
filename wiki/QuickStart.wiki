@@ -3,7 +3,7 @@
 = Quick Start =
 
 _Instructions to get you going on a Unix-like system_
-as originally written by gianmerlino, with minor changes for the repository change
+_as originally written by gianmerlino, with minor changes for the repository change_
 
 I wrote these instructions on a mostly stock Mac (the only significant modification is that I installed Xcode, which I think is where subversion came from) but they should apply to any Unix-like system assuming you have subversion and perl installed. If you're on Windows try the QuickStartWindows instructions instead.
 
