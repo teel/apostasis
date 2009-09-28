@@ -409,7 +409,7 @@ sub pageFooter {
     
     return <<END;
 <p class="footer">Generated on $timestr</p>
-<p class="footer">stasiscl available at <a href="http://code.google.com/p/stasiscl/">http://code.google.com/p/stasiscl/</a></p>
+<p class="footer">apostasis available at <a href="http://code.google.com/p/apostasis/">http://code.google.com/p/apostasis/</a></p>
 </div>
 </div>
 <script src="http://www.wowhead.com/widgets/power.js"></script>

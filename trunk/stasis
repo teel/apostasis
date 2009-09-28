@@ -34,7 +34,7 @@ you specify. Generally this will be 'add', which runs some calculations on
 the log and writes out HTML, or 'print' which prints out the log in a nicer
 format.
 
-For more information visit I<http://code.google.com/p/stasiscl/>.
+For more information visit I<http://code.google.com/p/apostasis/>.
 
 =head1 SYNOPSIS
 
@@ -114,7 +114,7 @@ B<-nav>       Add a cross-split navigation menu to each parse.
 
 =head1 BUGS
 
-http://code.google.com/p/stasiscl/
+http://code.google.com/p/apostasis/
 
 Use the "Issues" tab.
 
