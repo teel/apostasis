@@ -61,10 +61,10 @@ sub process_healing {
     
     # Add the HP to the target for overheal-tracking purposes.
     $self->{ohtrack}{ $event->{target} } += $event->{amount};
-
+    
     # Add absorbed amount to actual amount since it is not included
     $event->{amount} += $event->{absorbed} if exists $event->{absorbed};
-
+    
     # Figure out how much effective healing there was.
     my $effective;
     if( exists $event->{extraamount} ) {
@@ -74,21 +74,21 @@ sub process_healing {
         # TBC-style. Overhealing is not included.
         if( $self->{ohtrack}{ $event->{target} } > 0 ) {
             $effective = $event->{amount} - $self->{ohtrack}{ $event->{target} };
-
+            
             # Reset HP to zero (meaning full).
             $self->{ohtrack}{ $event->{target} } = 0;
         } else {
             $effective = $event->{amount};
         }
     }
-
+    
     # Add this as the appropriate kind of healing: tick, hit, or crit.
     my $type;
     if( $event->{action} == SPELL_PERIODIC_HEAL ) {
         $type = "tick";
         if ( $event->{critical} ) {
-        	#tick critted
-        	$hdata->{tickCritCount}++;
+            #tick critted
+            $hdata->{tickCritCount}++;
         }
     } elsif( $event->{critical} ) {
         $type = "crit";
@@ -107,7 +107,7 @@ sub process_healing {
             !$hdata->{"${type}Min"} ||
             $event->{amount} < $hdata->{"${type}Min"}
         );
-
+    
     $hdata->{"${type}Max"} = $event->{amount}
         if( 
             !$hdata->{"${type}Max"} ||

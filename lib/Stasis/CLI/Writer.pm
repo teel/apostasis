@@ -173,7 +173,7 @@ sub _write_dir {
         dirname  => $dname_suffix,
         name     => $boss->{long},
         short    => $boss->{short},
-        heroic	 => $boss->{heroic},
+        heroic   => $boss->{heroic},
         raid     => $raid,
         ext      => $exts,
         collapse => $collapse,
