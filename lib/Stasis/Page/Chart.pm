@@ -518,7 +518,7 @@ sub page {
         # PRINT OPENING XML TAG #
         #########################
         
-        $XML .= sprintf( '  <raid dpstime="%d" start="%s" dps="%d" comment="%s" lg="%d" dmg="%d" dir="%s" zone="%s">' . "\n",
+        $XML .= sprintf( '  <raid dpstime="%d" start="%s" dps="%d" comment="%s" lg="%d" dmg="%d" dir="%s" zone="%s" heroic="%d">' . "\n",
             100,
             $raidStart*1000,
             $raidDPS,
@@ -527,6 +527,7 @@ sub page {
             $raidDamage,
             $self->{dirname},
             Stasis::LogSplit->zone( $self->{short} ) || "",
+            $self->{heroic} || 0,
         );
 
         #########################

@@ -35,7 +35,7 @@ sub new {
     my $self = bless {
         base     => $params{base},
         server   => $params{server},
-        template => $params{template} || "sws-:short:-:start:",
+        template => $params{template} || "sws-:short:-:heroic:-:start:",
         fork     => $params{fork},
         workers  => {},
         written  => [],
@@ -65,6 +65,7 @@ sub fill_template {
     my @time = localtime( $boss->{start} || 0 );
     my %tmp = (
         short  => $boss->{short},
+        heroic => $boss->{heroic} ? "heroic" : "",
         start  => floor( $boss->{start} || 0 ),
         end    => floor( $boss->{end} || 0 ),
         kill   => $boss->{kill},
@@ -80,6 +81,7 @@ sub fill_template {
 
     my $template = $self->{template};
     $template =~ s/:(\w+):/ defined $tmp{$1} ? $tmp{$1} : ":$1:" /eg;
+    $template =~ s/\-\-/\-/g; # Replace double dashes that could have been caused by the :heroic: tag since it's empty on normal kills
     return $template;
 }
 
@@ -171,6 +173,7 @@ sub _write_dir {
         dirname  => $dname_suffix,
         name     => $boss->{long},
         short    => $boss->{short},
+        heroic	 => $boss->{heroic},
         raid     => $raid,
         ext      => $exts,
         collapse => $collapse,

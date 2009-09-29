@@ -44,6 +44,7 @@ sub new {
         server => $params{server} || "",
         dirname => $params{dirname} || "",
         short => $params{short} || "",
+        heroic => $params{heroic},
     };
     
     $self->{pm} = $params{pm} || Stasis::PageMaker->new;
@@ -212,8 +213,8 @@ sub _rowHealing {
         "R-AvTick" => $sdata->{tickCount} && $sdata->{tickTotal} && $self->{pm}->tip( int($sdata->{tickTotal} / $sdata->{tickCount}), sprintf( "Range: %d&ndash;%d", $sdata->{tickMin}, $sdata->{tickMax} ) ),
         "R-Crits" => $sdata->{critCount} && sprintf( "%d", $sdata->{critCount} ),
         "R-AvCrit" => $sdata->{critCount} && $sdata->{critTotal} && $self->{pm}->tip( int($sdata->{critTotal} / $sdata->{critCount}), sprintf( "Range: %d&ndash;%d", $sdata->{critMin}, $sdata->{critMax} ) ),
-        "R-% Crit" => $sdata->{count} && $sdata->{critCount} && ($sdata->{count} - ($sdata->{tickCount}||0)) && sprintf( "%0.1f%%", ($sdata->{critCount}||0) / ($sdata->{count} - ($sdata->{tickCount}||0)) * 100 ),
-    };
+        "R-% Crit" => $self->{pm}->tip( _cricruglaText($sdata) ),
+	};
 }
 
 sub _json {

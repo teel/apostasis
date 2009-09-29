@@ -476,7 +476,7 @@ if( $action eq "print" ) {
             } else {
                 # Closing a split.
                 $split_exts->finish($ed);
-                $boss_tries{ $boss->{short} } ++;
+                $boss_tries{ $boss->{short} . ($boss->{heroic} ? "-heroic" : "")} ++;
                 
                 # Suspend the combined extensions.
                 $combine_exts{ $boss->{short} }->suspend($ed) if $opt_combine;
@@ -691,7 +691,7 @@ if( $action eq "print" ) {
     my @dataxmls;
     File::Find::find( 
         sub {
-            if( -f $_ && ( $File::Find::name =~ /\/sws-[0-9]+\/data.xml$/ || $File::Find::name =~ /\/sws-[\w]+-[0-9]+\/data.xml$/ ) ) {
+            if( -f $_ && ( $File::Find::name =~ /\/sws-[0-9]+\/data.xml$/ || $File::Find::name =~ /\/sws-[\w\-]+-[0-9]+\/data.xml$/ ) ) {
                 push @dataxmls, $File::Find::name;
             }
         },
