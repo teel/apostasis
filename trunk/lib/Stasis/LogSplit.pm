@@ -795,120 +795,82 @@ our @fingerprints = (
 ##########################
 
 {
-    short => "sartharion",
-    zone => "obsidiansanctum",
-    long => "Sartharion",
-    mobStart => [ 28860 ],
+    short       => "sartharion",
+    zone        => "obsidiansanctum",
+    long        => "Sartharion",
+    mobStart    => [ 28860 ],
     mobContinue => [ 28860, 31218, 31219 ],
-    mobEnd => [ 28860 ],
-    timeout => 45,
+    mobEnd      => [ 28860 ],
+    timeout     => 45,
 },
 
 {
-    short => "archavon",
-    zone => "archavon",
-    long => "Archavon",
-    mobStart => [ 31125 ],
+    short       => "archavon",
+    zone        => "archavon",
+    long        => "Archavon",
+    mobStart    => [ 31125 ],
     mobContinue => [ 31125 ],
-    mobEnd => [ 31125 ],
-    timeout => 30,
+    mobEnd      => [ 31125 ],
+    timeout     => 30,
 },
 
 {
-    short => "emalon",
-    zone => "archavon",
-    long => "Emalon",
-    mobStart => [ 33993 ],
+    short       => "emalon",
+    zone        => "archavon",
+    long        => "Emalon",
+    mobStart    => [ 33993 ],
     mobContinue => [ 33993, 33998 ],
-    mobEnd => [ 33993 ],
-    timeout => 30,
+    mobEnd      => [ 33993 ],
+    timeout     => 30,
 },
+
 {
-    short => "koralon",
-    zone => "archavon",
-    long => "Koralon",
-    mobStart => [ 35013 ],
+    short       => "koralon",
+    zone        => "archavon",
+    long        => "Koralon",
+    mobStart    => [ 35013 ],
     mobContinue => [ 35013 ],
-    mobEnd => [ 35013 ],
-    timeout => 30,
+    mobEnd      => [ 35013 ],
+    timeout     => 30,
 },
+
 {
-    short => "malygos",
-    zone => "eyeofeternity",
-    long => "Malygos",
-    mobStart => [ 28859 ],
+    short       => "malygos",
+    zone        => "eyeofeternity",
+    long        => "Malygos",
+    mobStart    => [ 28859 ],
     mobContinue => [ 28859, 30161, 30249 ],
-    mobEnd => [ 28859 ],
-    timeout => 50,
+    mobEnd      => [ 28859 ],
+    timeout     => 50,
 },
+
 {
-    short       => "northrendbeasts",
-    zone        => "coliseum",
-    long        => "Northrend Beasts",
-    mobStart    => [ 34796 ],
-    mobContinue => [ 34796, 34800, 35176, 34854, 34799, 35144, 34797 ],
-    mobEnd      => [ 34797 ],
+    short       => "onyxia",
+    zone        => "onyxia",
+    long        => "Onyxia",
+    mobStart    => [ 10184 ],
+    mobContinue => [ 10184, 11262, 36561] ,
+    mobEnd      => [ 10184 ],
     timeout     => 30,
 },
-{
-    short       => "lordjaraxxus",
-    zone        => "coliseum",
-    long        => "Lord Jaraxxus",
-    mobStart    => [ 34780 ],
-    mobContinue => [ 34780, 34815, 34826 ],
-    mobEnd      => [ 34780 ],
-    timeout     => 30,
-},
-{
-    short       => "factionchampions",
-    zone        => "coliseum",
-    long        => "Faction Champions",
-    mobStart    => [ 34441, 34444, 34445, 34447, 34448, 34449, 34450, 34451, 34453, 
-34454, 34455, 34456, 34458, 34459, 34460, 34461, 34463, 34465, 34466, 34467, 34468, 
-34469, 34470, 34471, 34472, 34473, 34474, 34475  ],    
-    mobContinue => [ 34441, 34444, 34445, 34447, 34448, 34449, 34450, 34451, 34453, 
-34454, 34455, 34456, 34458, 34459, 34460, 34461, 34463, 34465, 34466, 34467, 34468, 
-34469, 34470, 34471, 34472, 34473, 34474, 34475  ],
-    timeout     => 30,
-},
-{
-    short       => "twinvalkyrs",
-    zone        => "coliseum",
-    long        => "Twin Valkyrs",
-    mobStart    => [ 34496, 34497 ],
-    mobContinue => [ 34496, 34497 ],
-    mobEnd      => [ 34496, 34497],
-    timeout     => 30,
-    endAll      => 1,
-},
-{
-   short       => "anubarak",
-   zone        => "coliseum",
-   long        => "Anub'arak",
-   mobStart    => [ 34564 ],
-   mobContinue => [ 34564, 34605, 34606, 34607 ],
-   mobEnd      => [ 34564 ],
-   timeout     => 30,
-   endAll      => 1,
-},
+
 ##################
 # TARGET DUMMIES #
 ##################
 
 {
-    short => "dummy",
-    long => "Target Dummy",
-    mobStart => [ 31146, 30527, 31144 ],
+    short       => "dummy",
+    long        => "Target Dummy",
+    mobStart    => [ 31146, 30527, 31144 ],
     mobContinue => [ 31146, 30527, 31144 ],
-    mobEnd => [],
-    timeout => 30,
+    mobEnd      => [ ],
+    timeout     => 30,
 },
 
 ##########
 # ULDUAR #
 ##########
 
-# 0xF15 0008159 05D408,"Flame Leviathan"
 {
     short       => "flameleviathan",
     zone        => "ulduar",
@@ -919,7 +881,6 @@ our @fingerprints = (
     timeout     => 15,
 },
 
-# 0xF15 000815E 000388,"Ignis the Furnace Master"
 {
     short       => "ignis",
     zone        => "ulduar",
@@ -940,7 +901,6 @@ our @fingerprints = (
     timeout     => 15,
 },
 
-# 0xF15 000820D 01DA44, "XT-002 Deconstructor"
 {
     short       => "xt002",
     zone        => "ulduar",
@@ -962,9 +922,6 @@ our @fingerprints = (
     endAll      => 1,
 },
 
-#3/8 12:50:28.781 SPELL_CAST_SUCCESS,0xF1500080A2000632,"Kologarn",0x10a48,0x0000000000000000,nil,0x80000000,64238,"Berserk",0x1 - 32930
-#3/8 12:50:28.843 SPELL_CAST_SUCCESS,0xF1300080A5000634,"Left Arm",0xa48,0x0000000000000000,nil,0x80000000,64238,"Berserk",0x1 - 32933
-#3/8 12:50:28.843 SPELL_CAST_SUCCESS,0xF1500080A600082E,"Right Arm",0xa48,0x0000000000000000,nil,0x80000000,64238,"Berserk",0x1 - 32934
 {
     short       => "kologarn",
     zone        => "ulduar",
@@ -985,18 +942,11 @@ our @fingerprints = (
     timeout     => 15,
 },
 
-#0xF15 0008298 004011,"Leviathan Mk II"		33432
-#0xF15 0008373 004181,"VX-001"			33651
-#0xF15 0008386 004A84,"Aerial Command Unit"	33670
-#0xF13 000842C 004AA5,"Bomb Bot"		33836
-#0xF13 0008509 004AA3,"Assault Bot"		34057
-#0xF13 000843F 004AA8,"Junk Bot"		33855
-
 {
     short       => "mimiron",
     zone        => "ulduar",
     long        => "Mimiron",
-    mobStart	=> [ 33432 ],
+    mobStart    => [ 33432 ],
     mobContinue	=> [ 33432, 33651, 33670, 33836, 34057, 33855 ],
     mobEnd      => [ 33432, 33651, 33670 ],
     timeout     => 70,
@@ -1066,15 +1016,77 @@ our @fingerprints = (
     endFriendly => 1,
     timeout     => 50,
 },
+
+############
+# COLISEUM #
+############
+
 {
-    short => "onyxia",
-    zone => "onyxia",
-    long => "Onyxia",
-    mobStart => [10184],
-    mobContinue => [10184,11262,36561],
-    mobEnd => [10184],
-    timeout => 30,
+    short       => "northrendbeasts",
+    zone        => "coliseum",
+    long        => "Northrend Beasts",
+    mobStart    => [ 34796 ],
+    mobContinue => [ 34796, 34800, 35176, 34854, 34799, 35144, 34797 ],
+    mobEnd      => [ 34797 ],
+    timeout     => 30,
+    heroic      => [ 67478, 67479 ], # Impale
+    normal      => [ 66331, 67477 ], # Impale
 },
+
+{
+    short       => "lordjaraxxus",
+    zone        => "coliseum",
+    long        => "Lord Jaraxxus",
+    mobStart    => [ 34780 ],
+    mobContinue => [ 34780, 34815, 34826 ],
+    mobEnd      => [ 34780 ],
+    timeout     => 30,
+    heroic      => [ 67030, 67031 ], # Fel lightning
+    normal      => [ 66528, 67029 ], # Fel lightning
+},
+
+{
+    short       => "factionchampions",
+    zone        => "coliseum",
+    long        => "Faction Champions",
+    mobStart    => [ 34453, 34454, 34455, 34456, 34458, 34441, 34448, 34449, 34450, 34451, 34444, 34445, 34447, 34459,      # Alliance NPCs (excl. pets)
+                     34475, 34467, 34472, 34471, 34474, 34469, 34460, 34468, 34463, 34466, 34470, 34473, 34461, 34465 ],    # Horde NPCs (excl. pets)
+    mobContinue => [ 34453, 34454, 34455, 34456, 34458, 34441, 34448, 34449, 34450, 34451, 34444, 34445, 34447, 34459,
+                     34475, 34467, 34472, 34471, 34474, 34469, 34460, 34468, 34463, 34466, 34470, 34473, 34461, 34465 ],
+    mobEnd      => [ 34453, 34454, 34455, 34456, 34458, 34441, 34448, 34449, 34450, 34451, 34444, 34445, 34447, 34459,
+                     34475, 34467, 34472, 34471, 34474, 34469, 34460, 34468, 34463, 34466, 34470, 34473, 34461, 34465 ],
+    endCount    => 6,
+    timeout     => 30,
+    heroic      => [ 65547 ], # PvP trinket
+    normal      => [ 66019, 67929, 65926, 68782 ], # DK Death Coil or Warrior MS. Might need more? Someone ever fought them without either DK or Warrior?
+},
+
+{
+    short       => "twinvalkyrs",
+    zone        => "coliseum",
+    long        => "Twin Valkyrs",
+    mobStart    => [ 34496, 34497 ],
+    mobContinue => [ 34496, 34497 ],
+    mobEnd      => [ 34496, 34497 ],
+    timeout     => 30,
+    endAll      => 1,
+    heroic      => [ 67266, 67267 ], # Dark surge
+    normal      => [ 65769, 67265 ], # Dark surge
+},
+
+{
+   short       => "anubarak",
+   zone        => "coliseum",
+   long        => "Anub'arak",
+   mobStart    => [ 34564 ],
+   mobContinue => [ 34564, 34605, 34606, 34607 ],
+   mobEnd      => [ 34564 ],
+   timeout     => 30,
+   endAll      => 1,
+   heroic      => [ 68509, 68510 ], # Penetrating cold
+   normal      => [ 66013, 67700 ], # Penetrating cold
+},
+
 );
 
 # Create and invert the %hfingerprints hash.
@@ -1129,6 +1141,38 @@ sub register {
         qw/SPELL_AURA_APPLIED SPELL_AURA_REMOVED SPELL_CAST_SUCCESS/,
         sub { $self->process_timeout_check( @_ ) }
     );
+    
+    # Looks for spells to determine normal/heroic
+    $ed->add(
+        qw/SPELL_DAMAGE SPELL_PERIODIC_DAMAGE SPELL_CAST_SUCCESS/,
+        sub { $self->process_heroic( @_ ) }
+    );
+}
+
+sub process_heroic {
+    my ($self, $event) = @_;
+    
+    if( my $vboss = $self->{scratch} ) {
+        # Check if we determined the difficulty already.
+        # This is what the normal array is for, to speed up the parsing of non-heroic fights.
+        if( not defined $self->{scratch}{heroic} ) {
+        
+            foreach ( @{$hfingerprints{$vboss->{short}}{heroic}} ) {
+                if( $_ == $event->{spellid} ) {
+                    $vboss->{heroic} = 1;
+                    return;
+                }
+            }
+            
+            foreach( @{$hfingerprints{$vboss->{short}}{normal}} ) {
+                if( $_ == $event->{spellid} ) {
+                    $vboss->{heroic} = 0;
+                    return;
+                }
+            }
+            
+        }
+    }
 }
 
 sub process_timeout_check {
@@ -1137,18 +1181,32 @@ sub process_timeout_check {
     # Check for timeout.
     my $vboss;
     if( ( $vboss = $self->{scratch} ) && $event->{t} > $vboss->{end} + $vboss->{timeout} ) {
-        # This fingerprint timed out without ending.
-        # Record it as an attempt.
         
-        $self->_bend(
-            {
-                short => $vboss->{short},
-                long  => $hfingerprints{$vboss->{short}}{long},
-                start => $vboss->{start},
-                end   => $vboss->{end},
-                kill  => 0,
-            }
-        );
+        # Check if enough mobs was killed for endCount to register it as a kill
+        if( $hfingerprints{$vboss->{short}}{endCount} && $vboss->{count} >= $hfingerprints{$vboss->{short}}{endCount} ) {
+            $self->_bend(
+                {
+                    short => $vboss->{short},
+                    long  => $hfingerprints{$vboss->{short}}{long},
+                    start => $vboss->{start},
+                    end   => $vboss->{end},
+                    kill  => 1,
+                }
+            );
+        } else {
+            # This fingerprint timed out without ending.
+            # Record it as an attempt.
+            
+            $self->_bend(
+                {
+                    short => $vboss->{short},
+                    long  => $hfingerprints{$vboss->{short}}{long},
+                    start => $vboss->{start},
+                    end   => $vboss->{end},
+                    kill  => 0,
+                }
+            );
+        }
         
         # 1 means timeout.
         return 1;
@@ -1178,8 +1236,9 @@ sub process {
             # Also possibly end it.
             if( ($event->{action} == UNIT_DIED || $event->{action} == UNIT_DESTROYED) && $fend{$target_id} && $fend{$target_id} eq $kboss ) {
                 $vboss->{dead}{$target_id} = 1;
+                $vboss->{count}++;
                 
-                if( !$hfingerprints{$kboss}{endAll} || ( scalar keys %{$vboss->{dead}} == scalar @{$hfingerprints{$kboss}{mobEnd}} ) ) {
+                if( !$hfingerprints{$kboss}{endCount} && ( !$hfingerprints{$kboss}{endAll} || ( scalar keys %{$vboss->{dead}} == scalar @{$hfingerprints{$kboss}{mobEnd}} ) ) ) {
                     $self->_bend(
                         {
                             short => $kboss,
@@ -1245,6 +1304,7 @@ sub _bstart {
         timeout => $hfingerprints{ $boss->{short} }{timeout},
         start   => $boss->{start},
         end     => $boss->{start},
+        count   => 0,
     };
     
     # Callback.
@@ -1256,6 +1316,10 @@ sub _bend {
 
     # Record lockout time.
     $self->{lockout}{$boss->{short}} = $boss->{end} if $boss->{kill};
+    
+    # Save the heroic status
+    $boss->{heroic} = $self->{scratch}{heroic};
+    $boss->{long} = "Heroic: " . $boss->{long} if $boss->{heroic};
 
     # Delete scratch boss (so we are free to start another)
     delete $self->{scratch};

@@ -47,7 +47,7 @@ sub actions {
 }
 
 sub value {
-    qw/hitCount hitTotal hitEffective hitMin hitMax critCount critTotal critEffective critMin critMax tickCount tickTotal tickEffective tickMin tickMax/;
+    qw/hitCount hitTotal hitEffective hitMin hitMax critCount critTotal critEffective critMin critMax tickCount tickTotal tickEffective tickMin tickMax tickCritCount/;
 }
 
 sub process_healing {
@@ -61,7 +61,10 @@ sub process_healing {
     
     # Add the HP to the target for overheal-tracking purposes.
     $self->{ohtrack}{ $event->{target} } += $event->{amount};
-    
+
+    # Add absorbed amount to actual amount since it is not included
+    $event->{amount} += $event->{absorbed} if exists $event->{absorbed};
+
     # Figure out how much effective healing there was.
     my $effective;
     if( exists $event->{extraamount} ) {
@@ -83,6 +86,10 @@ sub process_healing {
     my $type;
     if( $event->{action} == SPELL_PERIODIC_HEAL ) {
         $type = "tick";
+        if ( $event->{critical} ) {
+        	#tick critted
+        	$hdata->{tickCritCount}++;
+        }
     } elsif( $event->{critical} ) {
         $type = "crit";
     } else {
