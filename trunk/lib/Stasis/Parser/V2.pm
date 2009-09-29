@@ -49,7 +49,7 @@ sub parse {
     # Pull the stamp out.
     my ($t, @col) = $self->_split( $line );
 
-	if( !$t || @col < 7 ) {
+    if( !$t || @col < 7 ) {
         return {
             action              => 0,
             actor               => 0,
@@ -114,11 +114,11 @@ sub parse {
     } elsif( $action == SPELL_HEAL || $action == SPELL_PERIODIC_HEAL ) {
         if( @col <= 5 ) {
             @{$result}{ (@fspell, @fheal) } = @col;
-	} elsif (@col == 6) {
+        } elsif (@col == 6) {
             @{$result}{ (@fspell, @fheal_wlk) } = @col;
-    } else {
-	    @{$result}{ (@fspell, @fheal_wlk32) } = @col; 
-	}
+        } else {
+            @{$result}{ (@fspell, @fheal_wlk32) } = @col; 
+        }
     } elsif(
         $action == SPELL_PERIODIC_DRAIN ||
         $action == SPELL_PERIODIC_LEECH ||

@@ -83,7 +83,7 @@ B<-server>    If present, Armory links will be included using this server.
 B<-region>    If present, sets the prefix to the armory address. 
            -region=eu will make the parsed logs link to the 
            eu.wowarmory.com site, for example.
-	       
+           
 B<-version>   Either 1 or 2. Pre-2.4 combatlogs should be parsed with
            version = 1, post-2.4 combatlogs with 2. Default is '2',
            the new post-2.4 style.
@@ -485,7 +485,7 @@ if( $action eq "print" ) {
                 $trash_exts->resume($ed) if $opt_trash;
                 
                 # Possibly add an attempt number
-                $boss->{long} .= " try " . $boss_tries{ $boss->{short} } if !$boss->{kill};
+                $boss->{long} .= " try " . $boss_tries{ $boss->{short} . ($boss->{heroic} ? "-heroic" : "") } if !$boss->{kill};
                 
                 if( $opt_minlength && $boss->{end} - $boss->{start} < $opt_minlength ) {
                     # Check minlength option.

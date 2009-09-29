@@ -129,14 +129,14 @@ sub page {
         $raiderIncoming{$kactor} += $deInAll->{$kactor}{total} || 0 if $deInAll->{$kactor};
         $raidInDamage += $deInAll->{$kactor}{total} || 0 if $deInAll->{$kactor};
     }
-
-	# Calculate death count
-	my %deathCount;
+    
+    # Calculate death count
+    my %deathCount;
     foreach my $deathevent (keys %{$self->{ext}{Death}{actors}}) {
         if ($self->{raid}{$deathevent} && 
             $self->{raid}{$deathevent}{class} &&
             $self->{raid}{$deathevent}{class} ne "Pet") {
-				$deathCount{$deathevent} = @{$self->{ext}{Death}{actors}{$deathevent}};
+                $deathCount{$deathevent} = @{$self->{ext}{Death}{actors}{$deathevent}};
         }
     }
     
