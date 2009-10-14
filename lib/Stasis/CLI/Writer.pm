@@ -35,6 +35,7 @@ sub new {
     my $self = bless {
         base     => $params{base},
         server   => $params{server},
+        region   => $params{region},
         template => $params{template} || "sws-:short:-:heroic:-:start:",
         fork     => $params{fork},
         workers  => {},
@@ -170,6 +171,7 @@ sub _write_dir {
     # Initialize Pages with these parameters.
     my %page_init = (
         server   => $self->{server},
+        region   => $self->{region},
         dirname  => $dname_suffix,
         name     => $boss->{long},
         short    => $boss->{short},

@@ -42,6 +42,7 @@ sub new {
         collapse => $params{collapse},
         name => $params{name} || "Untitled",
         server => $params{server} || "",
+        region => $params{region} || "",
         dirname => $params{dirname} || "",
         short => $params{short} || "",
         heroic => $params{heroic},
