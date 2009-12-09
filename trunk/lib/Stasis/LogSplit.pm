@@ -54,6 +54,7 @@ our %zones = (
     "ulduar" => "Ulduar",
     "coliseum" => "Crusaders' Coliseum",
     "onyxia" => "Onyxia's Lair",
+    "icecrown" => "Icecrown Citadel",
 );
 
 # Fingerprints of various boss encounters.
@@ -1086,6 +1087,58 @@ our @fingerprints = (
    heroic      => [ 68509, 68510 ], # Penetrating cold
    normal      => [ 66013, 67700 ], # Penetrating cold
 },
+
+############
+# ICC #
+############
+{
+	short		=> "marrowgar",
+	zone		=> "icecrown",
+	long		=> "Lord Marrowgar",
+	mobStart	=> [ 36612 ],
+	mobContinue	=> [ 36612 ],
+	mobEnd		=> [ 36612 ],
+	timeout		=> 30
+	heroic		=> [ 70824, 70825], #Coldflame
+	normal		=> [ 69146, 70823], #Coldflame
+},
+{
+	short		=> "deathwisper",
+	zone		=> "icecrown",
+	long		=> "Lady Deathwhisper",
+	mobStart	=> [ 36855 ],
+	mobContinue	=> [ 36855, 37949, 37890 ],
+	mobEnd		=> [ 36855 ],
+	timeout		=> 30
+	heroic		=> [ 72502, 72007], #Frostbolt
+	normal		=> [ 72501, 71420], #Frostbolt
+	
+},
+{
+	short		=> "gunship",
+	zone		=> "icecrown",
+	long		=> "Gunship",
+	mobStart	=> [ 37200, 37187 ],
+	mobContinue	=> [ 37200, 37187 ],
+	mobEnd		=> [ 37200, 37187 ],
+	timeout		=> 30
+	heroic		=> [ 72502, 72007], #Frostbolt
+	normal		=> [ 72501, 71420], #Frostbolt
+	
+},
+{
+	short		=> "saurfang",
+	zone		=> "icecrown",
+	long		=> "Deathbringer Saurfang",
+	mobStart	=> [ 37813  ],
+	mobContinue	=> [ 37813, 38508 ],
+	mobEnd		=> [ 37813 ],
+	timeout		=> 30
+	##heroic		=> [ ], #Boiling Blood
+	normal		=> [ 72385, 72442], #Boiling Blood
+	
+},
+
 
 );
 
