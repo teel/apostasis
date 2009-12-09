@@ -1098,9 +1098,10 @@ our @fingerprints = (
 	mobStart	=> [ 36612 ],
 	mobContinue	=> [ 36612 ],
 	mobEnd		=> [ 36612 ],
-	timeout		=> 30
-	heroic		=> [ 70824, 70825], #Coldflame
-	normal		=> [ 69146, 70823], #Coldflame
+	timeout		=> 30,
+	endAll      => 1,
+	heroic		=> [ 70824, 70825], # Coldflame
+	normal		=> [ 69146, 70823], # Coldflame
 },
 {
 	short		=> "deathwisper",
@@ -1109,9 +1110,10 @@ our @fingerprints = (
 	mobStart	=> [ 36855 ],
 	mobContinue	=> [ 36855, 37949, 37890 ],
 	mobEnd		=> [ 36855 ],
-	timeout		=> 30
-	heroic		=> [ 72502, 72007], #Frostbolt
-	normal		=> [ 72501, 71420], #Frostbolt
+	timeout		=> 30,
+	endAll      => 1,
+	heroic		=> [ 72502, 72007], # Frostbolt
+	normal		=> [ 72501, 71420], # Frostbolt
 	
 },
 {
@@ -1121,7 +1123,7 @@ our @fingerprints = (
 	mobStart	=> [ 37200, 37187 ],
 	mobContinue	=> [ 37200, 37187 ],
 	mobEnd		=> [ 37200, 37187 ],
-	timeout		=> 30
+	timeout		=> 30,
 	heroic		=> [ ], 
 	normal		=> [ ], 
 	
@@ -1133,8 +1135,8 @@ our @fingerprints = (
 	mobStart	=> [ 37813  ],
 	mobContinue	=> [ 37813, 38508 ],
 	mobEnd		=> [ 37813 ],
-	timeout		=> 30
-	##heroic		=> [ ], #Boiling Blood
+	timeout		=> 30,
+	heroic		=> [ ], #Boiling Blood
 	normal		=> [ 72385, 72442], #Boiling Blood
 	
 },
