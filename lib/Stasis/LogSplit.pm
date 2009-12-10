@@ -1104,7 +1104,7 @@ our @fingerprints = (
 	normal		=> [ 69146, 70823], # Coldflame
 },
 {
-	short		=> "deathwisper",
+	short		=> "deathwhisper",
 	zone		=> "icecrown",
 	long		=> "Lady Deathwhisper",
 	mobStart	=> [ 36855 ],
@@ -1112,8 +1112,8 @@ our @fingerprints = (
 	mobEnd		=> [ 36855 ],
 	timeout		=> 30,
 	endAll      => 1,
-	heroic		=> [ 72502, 72007], # Frostbolt
-	normal		=> [ 72501, 71420], # Frostbolt
+	heroic		=> [], # Frostbolt
+	normal		=> [72007], # Frostbolt
 	
 },
 {
