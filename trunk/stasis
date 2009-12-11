@@ -112,6 +112,19 @@ B<-collapse>  For boss attempts and kills, collapse all mobs that have the
 
 B<-nav>       Add a cross-split navigation menu to each parse.
 
+B<-phpposturl>  At the end of the parse, output to STDOUT links in phpBB
+           forum format a list of all bosses, trash and overall stats in
+           this parse. The URL fragment following this paramter will be
+           prepended to each output directly in the list.
+
+B<-cmdafterparse>  At the end of the parse, run the program specified after
+           this option. Parameters to the command will be the output
+           directory, and each boss directory written to. This allows
+           an external script to copy the generated files to an external
+           web server
+            Eg:       stasis -dir stats -cmdafterparse ./copy_files.pl
+            Will Run: ./copyfiles stats <dir1> <dir2> ...
+
 =head1 BUGS
 
 http://code.google.com/p/apostasis/
@@ -171,6 +184,8 @@ my $opt_throttle;
 my $opt_debug;
 my $opt_locale;
 my $opt_fork;
+my $opt_phpposturl;
+my $opt_cmdafterparse;
 
 ## SUBS ##
 
@@ -304,6 +319,8 @@ my $rc = GetOptions(
     "debug"         => \$opt_debug,
     "locale=s"      => \$opt_locale,
     "fork"          => \$opt_fork,
+    "phpposturl=s"  => \$opt_phpposturl,
+    "cmdafterparse=s"  => \$opt_cmdafterparse,
 );
 
 setlocale( LC_ALL, $opt_locale ) if $opt_locale;
@@ -328,6 +345,9 @@ my $parser = Stasis::Parser->new(
     logger  => $opt_logger,
     year    => $opt_year,
 );
+
+my (@bosses) = ();  # Keep track of kills for -phpposturl
+my (@dirs) = ();
 
 # Case out the various actions.
 if( $action eq "print" ) {
@@ -502,6 +522,10 @@ if( $action eq "print" ) {
                         collapse => $opt_collapse,
                         index    => $index,
                     );
+                    if ($opt_phpposturl) {
+			push @bosses, "[url=$opt_phpposturl/sws-".$boss->{short}."-".floor($boss->{start})."/]".$boss->{long}."[/url]";
+		    }
+		    push @dirs, "sws-".$boss->{short}."-".floor($boss->{start});
 
                     # Find the directory name.
                     status sprintf "writing %s (%s) .. ", $boss->{long}, $writer->fill_template;
@@ -587,6 +611,11 @@ if( $action eq "print" ) {
     
     # Write trash
     if( $opt_trash && !$opt_nowrite ) {
+	if ($opt_phpposturl) {
+	    push @bosses, "[url=$opt_phpposturl/sws-trash-".floor($first)."/]Trash[/url] ";
+	}
+	push @dirs, "sws-trash-".floor($first);
+        
         my $boss = { short => "trash", long => "Trash Mobs", start => $first, kill => 0 };
 
         eval {
@@ -603,8 +632,6 @@ if( $action eq "print" ) {
     # Write combine
     if( $opt_combine && !$opt_nowrite ) {
         while( my ($kboss, $exts) = each (%combine_exts) ) {
-            my $dname = sprintf "%s/sws-%s-combine-%d", $opt_dir, $kboss, floor($first);
-            my $dname_old = $dname;
             
             # Skip unless we actually had more than one of this boss.
             if( $boss_tries{$kboss} > 1 ) {
@@ -627,6 +654,11 @@ if( $action eq "print" ) {
     
     # Write overall
     if( $opt_overall && !$opt_nowrite ) {
+	if ($opt_phpposturl) {
+	    push @bosses, "[url=$opt_phpposturl/sws-overall-".floor($first)."/]Full Stats[/url]";
+	}
+	push @dirs, "sws-overall-".floor($first);
+        
         my $boss = { short => "overall", long => "Overall", start => $first, kill => 0 };
 
         eval {
@@ -639,7 +671,15 @@ if( $action eq "print" ) {
             bomb $@;
         }
     }
-    
+
+    print join("\n",@bosses)."\n" if ($opt_phpposturl);
+
+    if ($opt_cmdafterparse) {
+      # Run system command after parse, with the directories we used as parameters.
+      # Useful to copy the parsed files to an extenal web server
+      system($opt_cmdafterparse,$opt_dir,@dirs);
+    }
+
     # Write navigation
     
     status "Waiting for children to exit .. " if $opt_fork;
@@ -679,6 +719,7 @@ if( $action eq "print" ) {
             }
         }
     }
+
 } elsif( $action eq "history" ) {
     # Going to output in $opt_dir
     bomb "not a directory: $opt_dir" unless $opt_dir && -d $opt_dir;
