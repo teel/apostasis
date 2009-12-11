@@ -293,8 +293,8 @@ sub pageHeader {
 <head>
 <title>$title</title>
 <!-- YUI: http://developer.yahoo.com/yui/articles/hosting/?connection&container&event&json&menu&MIN -->
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/container/assets/skins/sam/container.css&2.7.0/build/menu/assets/skins/sam/menu.css"> 
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/connection/connection-min.js&2.7.0/build/container/container-min.js&2.7.0/build/json/json-min.js&2.7.0/build/menu/menu-min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/container/assets/skins/sam/container.css&2.6.0/build/menu/assets/skins/sam/menu.css"> 
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo-dom-event/yahoo-dom-event.js&2.6.0/build/connection/connection-min.js&2.6.0/build/container/container-min.js&2.6.0/build/json/json-min.js&2.6.0/build/menu/menu-min.js"></script>
 
 <!-- SWS -->
 <link rel="stylesheet" type="text/css" href="../extras/sws2.css" />
@@ -358,6 +358,7 @@ sub statHeader {
                             <div class="bd">
                                 <ul>
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#damage_out" onClick="toggleTab('damage_out',1)">Damage Out</a></li>
+                                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#dps_out" onClick="toggleTab('dps_out',1)">DPS Out</a></li>
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#damage_in" onClick="toggleTab('damage_in',1)">Damage In</a></li>
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#healing" onClick="toggleTab('healing',1)">Healing</a></li>
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#deaths" onClick="toggleTab('deaths',1)">Deaths</a></li>
@@ -387,6 +388,8 @@ sub statHeader {
                             </div>
                         </div>
                     </li>
+                    <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="../../">Raid Index</a>
+</li>
                 </ul>
             </div>
         </div>
@@ -409,7 +412,7 @@ sub pageFooter {
     
     return <<END;
 <p class="footer">Generated on $timestr</p>
-<p class="footer">apostasis available at <a href="http://code.google.com/p/apostasis/">http://code.google.com/p/apostasis/</a></p>
+<p class="footer">stasiscl available at <a href="http://code.google.com/p/stasiscl/">http://code.google.com/p/stasiscl/</a></p>
 </div>
 </div>
 <script src="http://www.wowhead.com/widgets/power.js"></script>
