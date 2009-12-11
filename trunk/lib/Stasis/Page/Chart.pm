@@ -66,6 +66,7 @@ sub page {
     # Also get a list of total damage by raid member (on the side)
     my %raiderSpans;
     my %raiderDamage;
+    my %raiderDPS;
     my %raiderIncoming;
     my $raidDamage = 0;
     
@@ -213,7 +214,7 @@ sub page {
 
     @deathlist = sort { $a->{'t'} <=> $b->{'t'} } @deathlist;
     
-    my @tabs = ( "Damage Out", "Damage In", "Healing", "Raid & Mobs", "Deaths" );
+    my @tabs = ( "Damage Out", "DPS Out", "Damage In", "Healing", "Raid & Mobs", "Deaths" );
     $PAGE .= "<br />" . $pm->tabBar(@tabs);
     
     ################
@@ -230,39 +231,64 @@ sub page {
             "R-%",
             " ",
         );
+
+    # Damage Out, then DPS
+    my @damagesort;
+    my ($DAMTYPE_OUT, $DAMTYPE_DPS) = (1,2);
+    foreach my $damtype ($DAMTYPE_OUT, $DAMTYPE_DPS) {
+
+	$PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
+	$PAGE .= $pm->tableStart();
+	$PAGE .= $pm->tableHeader((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"), @damageHeader);
     
-    $PAGE .= $pm->tabStart("Damage Out");
-    $PAGE .= $pm->tableStart();
-    $PAGE .= $pm->tableHeader("Damage Out", @damageHeader);
+	if ($damtype == $DAMTYPE_OUT) {
+	    @damagesort = sort {
+		$raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
+		} keys %raiderDamage;
+	} else {
+	    @damagesort = sort {
+		$raiderDPS{$b} <=> $raiderDPS{$a} || $a cmp $b
+		} keys %raiderDPS;
+	}
     
-    my @damagesort = sort {
-        $raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
-    } keys %raiderDamage;
-    
-    my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
-    
-    foreach my $actor (@damagesort) {
-        my $ptime = $self->{ext}{Presence}->presence($actor);
-        my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
+	my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
+	my $mostdps = keys %raiderDPS && $raiderDPS{ $damagesort[0] };
+	
+	foreach my $actor (@damagesort) {
+	    my $ptime = $self->{ext}{Presence}->presence($actor);
+
+	    my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
+	    $raiderDPS{$actor} = $raiderDamage{$actor} && $dpsTime && ($raiderDamage{$actor} / $dpsTime);
         
-        $PAGE .= $pm->tableRow( 
-            header => \@damageHeader,
-            data => {
-                "Player" => $pm->actorLink( $actor ),
-                "R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
-                "R-%" => $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100) ),
-                "R-Dam. Out" => $raiderDamage{$actor},
-                " " => $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) ),
-                "R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
-                "R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
-                "R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
-            },
-            type => "",
-        );
-    }
+	    my ($perc, $chart);
+	    if ($damtype == $DAMTYPE_OUT) {
+		$perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
+		$chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
+
+	    } else {
+		$perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
+		$chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
+	    }
+
+	    $PAGE .= $pm->tableRow( 
+				    header => \@damageHeader,
+				    data => {
+					"Player" => $pm->actorLink( $actor ),
+					"R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
+					"R-%" => $perc,
+					"R-Dam. Out" => $raiderDamage{$actor},
+					" " => $chart,
+					"R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
+					"R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
+					"R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
+				    },
+				    type => "",
+				    );
+	}
     
-    $PAGE .= $pm->tableEnd;
-    $PAGE .= $pm->tabEnd;
+	$PAGE .= $pm->tableEnd;
+	$PAGE .= $pm->tabEnd;
+    }
 
     #########################
     # DAMAGE INCOMING CHART #
