@@ -632,9 +632,8 @@ if( $action eq "print" ) {
     # Write combine
     if( $opt_combine && !$opt_nowrite ) {
         while( my ($kboss, $exts) = each (%combine_exts) ) {
-            
             # Skip unless we actually had more than one of this boss.
-            if( $boss_tries{$kboss} > 1 ) {
+            if( defined($boss_tries{$kboss}) && $boss_tries{$kboss} > 1 ) {
                 # Boss name.
                 my $bname = Stasis::LogSplit->name( $kboss );
                 my $boss = { short => "${kboss}-combine", long => "$bname (combined)", start => $first, kill => 0 };

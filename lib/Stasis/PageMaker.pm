@@ -293,8 +293,8 @@ sub pageHeader {
 <head>
 <title>$title</title>
 <!-- YUI: http://developer.yahoo.com/yui/articles/hosting/?connection&container&event&json&menu&MIN -->
-<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.6.0/build/container/assets/skins/sam/container.css&2.6.0/build/menu/assets/skins/sam/menu.css"> 
-<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.6.0/build/yahoo-dom-event/yahoo-dom-event.js&2.6.0/build/connection/connection-min.js&2.6.0/build/container/container-min.js&2.6.0/build/json/json-min.js&2.6.0/build/menu/menu-min.js"></script>
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/container/assets/skins/sam/container.css&2.7.0/build/menu/assets/skins/sam/menu.css"> 
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/connection/connection-min.js&2.7.0/build/container/container-min.js&2.7.0/build/json/json-min.js&2.7.0/build/menu/menu-min.js"></script>
 
 <!-- SWS -->
 <link rel="stylesheet" type="text/css" href="../extras/sws2.css" />
@@ -412,7 +412,7 @@ sub pageFooter {
     
     return <<END;
 <p class="footer">Generated on $timestr</p>
-<p class="footer">stasiscl available at <a href="http://code.google.com/p/stasiscl/">http://code.google.com/p/stasiscl/</a></p>
+<p class="footer">apostasis available at <a href="http://code.google.com/p/apostasis/">http://code.google.com/p/apostasis/</a></p>
 </div>
 </div>
 <script src="http://www.wowhead.com/widgets/power.js"></script>
