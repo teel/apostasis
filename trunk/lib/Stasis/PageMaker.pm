@@ -388,7 +388,7 @@ sub statHeader {
                             </div>
                         </div>
                     </li>
-                    <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="../../">Raid Index</a>
+                    <li class="yuimenubaritem"><a class="yuimenubaritemlabel" href="../">Raid Index</a>
 </li>
                 </ul>
             </div>
