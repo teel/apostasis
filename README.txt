@@ -7,11 +7,6 @@ The flot .js files must be placed in the extras directory. Plot output
 is enabled by passing the -plot flag.
 
 Current issues:
-* plot values appear to be ~twice the correct value - hacking the code
-to plot cumulative damage output for example shows the curve finishing
-at ~twice the listed raid damage. This is the major issue that holds
-up committing to the trunk.
-
 * output files can be large and slow to parse. This is probably
 unavoidable for the most part but might be alleviated in cases where
 outputs are zero for a long stretch, e.g. between boss attempts in an
