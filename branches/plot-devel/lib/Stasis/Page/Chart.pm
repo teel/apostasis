@@ -595,10 +595,28 @@ sub page {
         my $healString="[";
         my $dinString="[";
         
+        #These three hold the last value we used so we can skip repeat zero values to keep page sizes down in long parses
+        #The time ones are used to make sure we don't repeat a write when we have to write out the entry before
+        my $lastDout=0; my $lastDoutTime=0;
+        my $lastHeal=0; my $lastHealTime=0;
+        my $lastDin=0; my $lastDinTime=0;
+        
         for (my $i=$mintime; $i<=$maxtime; $i++) {
-	    	if (exists $damageAtTimeAcc->{$i}) {$dpsString.="[$i"."000,".$damageAtTimeAcc->{$i}."],";} else {$dpsString.="[$i"."000,0],";}
-	    	if (exists $healingAtTimeAcc->{$i}) {$healString.="[$i"."000,".$healingAtTimeAcc->{$i}."],";} else {$healString.="[$i"."000,0],";}
-	    	if (exists $dinAtTimeAcc->{$i}) {$dinString.="[$i"."000,".$dinAtTimeAcc->{$i}."],";} else {$dinString.="[$i"."000,0],";}
+	        if (exists $damageAtTimeAcc->{$i}) {
+	    	    if (!$lastDout && $i-1 != $lastDoutTime) { $dpsString.="[". ($i-1) ."000,0],"; }
+	    	    $dpsString.="[$i"."000,".$damageAtTimeAcc->{$i}."],";
+	    	    $lastDout = $damageAtTimeAcc->{$i}; $lastDoutTime=$i;
+	        } elsif ($lastDout) { $dpsString.="[". $i ."000,0],"; $lastDout=0; $lastDoutTime=$i;}
+	        if (exists $healingAtTimeAcc->{$i}) {
+	            if (!$lastHeal && $i-1 != $lastHealTime) { $healString.="[". ($i-1) ."000,0],"; }
+	            $healString.="[$i"."000,".$healingAtTimeAcc->{$i}."],"; 
+	            $lastHeal=$healingAtTimeAcc->{$i}; $lastHealTime=$i;
+	        } elsif ($lastHeal) { $healString.="[". $i ."000,0],"; $lastHeal=0; $lastHealTime=$i;}
+	        if (exists $dinAtTimeAcc->{$i}) {
+	            if (!$lastDin && $i-1 != $lastDinTime) { $dinString.="[". ($i-1) ."000,0],"; }
+	            $dinString.="[$i"."000,".$dinAtTimeAcc->{$i}."],";
+	            $lastDin = $dinAtTimeAcc->{$i}; $lastDinTime=$i;
+	        } elsif ($lastDin) { $dinString.="[". $i ."000,0],"; $lastDin=0; $lastDinTime=$i;}
         }
        $dpsString =~ s/,$/]/; #closes the array
 	   $healString =~ s/,$/]/; #closes the array
