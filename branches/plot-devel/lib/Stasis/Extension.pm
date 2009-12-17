@@ -172,7 +172,6 @@ sub sum {
             foreach my $e (@expand) {
                 $ref = $ref->{ $keyActor && ($e eq "actor" || $e eq "target") ? $keyActor->($keys_seen[$keys_map{$e}]) : $keys_seen[$keys_map{$e}] } ||= {};
             }
-
             ext_sum( $ref, $hash );
         }
     };
@@ -206,6 +205,12 @@ sub ext_sum {
                     # Maximum
                     if( $val && $val > $sd1->{$key} ) {
                         $sd1->{$key} = $val;
+                    }
+                } elsif( $key =~ /AtTime$/ ) {
+                    # This is a hash of timestamped data and we need to individually sum up values at each time
+                    # $val is a reference to the hash we add in. $sd1->{$key} is a reference to the hash we are adding to.
+                    foreach (keys %$val) {
+                    	$sd1->{$key}->{$_} += $val->{$_};
                     }
                 } elsif( $key ne "type" ) {
                     # Total

@@ -104,6 +104,13 @@ sub timeString {
     sprintf "%d/%d %02d:%02d:%02d\.%03d", $t[4]+1, $t[3], $t[2], $t[1], $t[0], $2?$2*1000:0;
 }
 
+sub timeInSeconds {
+    my ( $self ) = @_;
+    
+    $self->{t} =~ /^(\d+)(\.(\d+)|)$/;
+    return $1;
+}
+
 sub oldFormat {
     my ($self) = @_;
     

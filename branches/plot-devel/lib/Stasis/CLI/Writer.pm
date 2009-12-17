@@ -36,6 +36,7 @@ sub new {
         base     => $params{base},
         server   => $params{server},
         region   => $params{region},
+        plot     => $params{plot},
         template => $params{template} || "sws-:short:-:heroic:-:start:",
         fork     => $params{fork},
         workers  => {},
@@ -172,6 +173,7 @@ sub _write_dir {
     my %page_init = (
         server   => $self->{server},
         region   => $self->{region},
+        plot     => $self->{plot},
         dirname  => $dname_suffix,
         name     => $boss->{long},
         short    => $boss->{short},
