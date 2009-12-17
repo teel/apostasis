@@ -22,7 +22,6 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package Stasis::PageMaker;
-
 use strict;
 use warnings;
 use POSIX;
@@ -287,7 +286,9 @@ sub pageHeader {
     $self->{tid} = 0;
     
     # Add subtitle if it's nonempty
-    $title .= " : $subtitle" if $subtitle;    
+    $title .= " : $subtitle" if $subtitle;
+    
+    if ($self->{plot}) {
     return <<END;
 <html>
 <head>
@@ -295,7 +296,27 @@ sub pageHeader {
 <!-- YUI: http://developer.yahoo.com/yui/articles/hosting/?connection&container&event&json&menu&MIN -->
 <link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/container/assets/skins/sam/container.css&2.7.0/build/menu/assets/skins/sam/menu.css"> 
 <script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/connection/connection-min.js&2.7.0/build/container/container-min.js&2.7.0/build/json/json-min.js&2.7.0/build/menu/menu-min.js"></script>
-
+<!-- SWS -->
+<link rel="stylesheet" type="text/css" href="../extras/sws2.css" />
+<script type="text/javascript" src="../extras/sws.js"></script>
+<!-- flot -->    
+<!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+<script language="javascript" type="text/javascript" src="../extras/jquery.js"></script>
+<script language="javascript" type="text/javascript" src="../extras/jquery.flot.js"></script>
+<script language="javascript" type="text/javascript" src="../extras/jquery.flot.selection.js"></script>
+</head>
+<body>
+<div class="yui-skin-sam">
+<div class="swsmaster">    
+END
+    } else {
+    return <<END;
+<html>
+<head>
+<title>$title</title>
+<!-- YUI: http://developer.yahoo.com/yui/articles/hosting/?connection&container&event&json&menu&MIN -->
+<link rel="stylesheet" type="text/css" href="http://yui.yahooapis.com/combo?2.7.0/build/container/assets/skins/sam/container.css&2.7.0/build/menu/assets/skins/sam/menu.css"> 
+<script type="text/javascript" src="http://yui.yahooapis.com/combo?2.7.0/build/yahoo-dom-event/yahoo-dom-event.js&2.7.0/build/connection/connection-min.js&2.7.0/build/container/container-min.js&2.7.0/build/json/json-min.js&2.7.0/build/menu/menu-min.js"></script>
 <!-- SWS -->
 <link rel="stylesheet" type="text/css" href="../extras/sws2.css" />
 <script type="text/javascript" src="../extras/sws.js"></script>
@@ -304,6 +325,7 @@ sub pageHeader {
 <div class="yui-skin-sam">
 <div class="swsmaster">
 END
+    }
 }
 
 sub statHeader {
@@ -362,6 +384,10 @@ sub statHeader {
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#damage_in" onClick="toggleTab('damage_in',1)">Damage In</a></li>
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#healing" onClick="toggleTab('healing',1)">Healing</a></li>
                                     <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#deaths" onClick="toggleTab('deaths',1)">Deaths</a></li>
+MENU
+        #Additional option if using plots from flot
+        if ($self->{plot}) {$PAGE .= '                                    <li class="yuimenuitem"><a class="yuimenuitemlabel" href="index.html#plot" onClick="toggleTab(\'plot\',1)">Plot</a></li>';}
+        $PAGE .= <<MENU;
                                 </ul>
                             </div>
                         </div>

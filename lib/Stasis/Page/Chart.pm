@@ -113,6 +113,19 @@ sub page {
         $raidDamage += $_;
     }
     
+    #Prepare damageAtTime data if we are making a plot
+    my $damageAtTime;
+    my $damageAtTimeAcc; #ref to accumulated data
+    if ($self->{plot}) { #Use damageAtTime
+        $damageAtTime = $self->{ext}{Damage}->sum(
+            actor => \@raiders, 
+            -target => \@raiders, 
+            expand => [ "actor" ], 
+            fields => [ "damageAtTime" ]
+        );
+        $damageAtTimeAcc=$self->_accumulateAtTime("damageAtTime",$damageAtTime);
+    }
+
     # Calculate incoming damage
     my $raidInDamage = 0;
     my $deInAll = $self->{ext}{Damage}->sum( 
@@ -122,6 +135,18 @@ sub page {
     );
     
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$deInAll );
+
+    #Prepare dinAtTime data if we are making a plot
+    my $dinAtTime;
+    my $dinAtTimeAcc; #ref to accumulated data
+    if ($self->{plot}) { #Use dinAtTime
+        $dinAtTime = $self->{ext}{Damage}->sum(
+            target => \@raiders, 
+            expand => [ "target" ], 
+            fields => [ "damageAtTime" ]
+        );
+        $dinAtTimeAcc=$self->_accumulateAtTime("damageAtTime",$dinAtTime);
+    }
     
     while( my ($kactor, $ractor) = each %{$self->{raid}} ) {
         # Only show raiders
@@ -158,6 +183,19 @@ sub page {
     
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$heOutFriendly );
     $_->{effective} = $self->_addHCT( $_, "Effective" ) foreach ( values %$heOutFriendly );
+
+    #Prepare healingAtTime data if we are making a plot
+    my $healingAtTime;
+    my $healingAtTimeAcc; #ref to accumulated data
+    if ($self->{plot}) { #Use healingAtTime
+        $healingAtTime = $self->{ext}{Healing}->sum(
+            actor => \@raiders, 
+            target => \@raiders, 
+            expand => [ "actor" ], 
+            fields => [ "healingAtTime" ]
+        );
+        $healingAtTimeAcc=$self->_accumulateAtTime("healingAtTime",$healingAtTime);
+    }
     
     while( my ($kactor, $ractor) = each (%{$self->{raid}}) ) {
         # Only show raiders
@@ -214,7 +252,8 @@ sub page {
 
     @deathlist = sort { $a->{'t'} <=> $b->{'t'} } @deathlist;
     
-    my @tabs = ( "Damage Out", "DPS Out", "Damage In", "Healing", "Raid & Mobs", "Deaths" );
+    my @tabs = ( "Damage Out", "DPS Out", "Damage In", "Healing", "Raid & Mobs", "Deaths"); 
+    if ($self->{plot}) {push @tabs, "Plot";}
     $PAGE .= "<br />" . $pm->tabBar(@tabs);
     
     ################
@@ -540,12 +579,104 @@ sub page {
     
     $PAGE .= $pm->tableEnd;
     $PAGE .= $pm->tabEnd;
+
+    #####################
+    # FLOT PLOTS        #
+    #####################
+    if ($self->{plot}) { 
+        #Prepare the data
+        my @dpstimestamps=keys %$damageAtTimeAcc;
+        my @healingtimestamps=keys %$healingAtTimeAcc;
+        my @dintimestamps=keys %$dinAtTimeAcc;
+        my @timestamps=sort (@dpstimestamps,@healingtimestamps,@dintimestamps);
+        my $mintime=$timestamps[0]; my $maxtime=$timestamps[-1];
+	    
+        my $dpsString="[";
+        my $healString="[";
+        my $dinString="[";
+        
+        for (my $i=$mintime; $i<=$maxtime; $i++) {
+	    	if (exists $damageAtTimeAcc->{$i}) {$dpsString.="[$i"."000,".$damageAtTimeAcc->{$i}."],";} else {$dpsString.="[$i"."000,0],";}
+	    	if (exists $healingAtTimeAcc->{$i}) {$healString.="[$i"."000,".$healingAtTimeAcc->{$i}."],";} else {$healString.="[$i"."000,0],";}
+	    	if (exists $dinAtTimeAcc->{$i}) {$dinString.="[$i"."000,".$dinAtTimeAcc->{$i}."],";} else {$dinString.="[$i"."000,0],";}
+        }
+       $dpsString =~ s/,$/]/; #closes the array
+	   $healString =~ s/,$/]/; #closes the array
+       $dinString =~ s/,$/]/; #closes the array
+	    
+	    #Prepare the page
+	    my @plotHeader = ( "Damage out (red), Healing (blue), Damage in (black)");
+		
+	    $PAGE .= $pm->tabStart("Plot");
+        $PAGE .= $pm->tableStart();
+        $PAGE .= $pm->tableHeader("Plot", @plotHeader);
+        $PAGE .= $pm->tableEnd;
+
+        #Insert flotplot
+        #this is dummy code
+        $PAGE .= <<END;
+<div id="mainplot" style="width:700px;height:300px;"></div>
+<div id="miniplot" style="width:700px;height:100px;"></div>
+<script id="source" language="javascript" type="text/javascript">
+\$(function () {
+    var dps = $dpsString;
+    var heal = $healString;
+    var din = $dinString;
+    var options = {
+        legend: { show: false },
+        series: {
+            lines: { show: true },
+            points: { show: false }
+        },
+        xaxis: { mode: "time", ticks: 6 },
+        yaxis: { ticks: 10 },
+        selection: { mode: "x" }
+    };
     
+    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ], options);
+
+    var miniplot = \$.plot(\$("#miniplot"), [ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ], {
+        legend: { show: false },
+        series: {
+            lines: { show: true, lineWidth: 1 },
+            shadowSize: 0
+        },
+        xaxis: { ticks: 6, mode: "time" },
+        yaxis: { ticks: 2 },
+        grid: { color: "#999" },
+        selection: { mode: "x" }
+    });
+    
+    \$("#mainplot").bind("plotselected", function (event, ranges) {
+        // clamp the zooming to prevent eternal zoom
+        if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+            ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+        
+        // do the zooming
+        mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ],
+                      \$.extend(true, {}, options, {
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+                      }));
+        
+        // don't fire event on the overview to prevent eternal loop
+        miniplot.setSelection(ranges, true);
+    });
+    \$("#miniplot").bind("plotselected", function (event, ranges) {
+        mainplot.setSelection(ranges);
+    });
+});
+</script>        
+
+END
+        $PAGE .= $pm->tabEnd;
+        
+	}
     #####################
     # PRINT HTML FOOTER #
     #####################
-    
-    $PAGE .= $pm->jsTab("Damage Out");
+    if ($self->{plot}) {
+        $PAGE .= $pm->jsTab("Plot");
+    } else {$PAGE .= $pm->jsTab("Damage Out");} #This is necessary as flot hates being hidden
     $PAGE .= $pm->tabBarEnd;
     $PAGE .= $pm->pageFooter;
     

@@ -43,12 +43,13 @@ sub new {
         name => $params{name} || "Untitled",
         server => $params{server} || "",
         region => $params{region} || "",
+        plot   => $params{plot} || "",
         dirname => $params{dirname} || "",
         short => $params{short} || "",
         heroic => $params{heroic},
     };
-    
-    $self->{pm} = $params{pm} || Stasis::PageMaker->new;
+   
+    $self->{pm} = $params{pm} || Stasis::PageMaker->new(plot => $self->{plot});
     $self->{pm}{$_} = $self->{$_} foreach qw/index raid ext grouper collapse/;
     
     bless $self, $class;
@@ -217,6 +218,19 @@ sub _rowHealing {
         "R-% Crit" => $self->{pm}->tip( _cricruglaText($sdata) ),
 	};
 }
+
+sub _accumulateAtTime {
+    #Accumulate various *atTime fields into a single hash
+    my %acc; #Holds the accumulated hash we'll return
+    my ($self,$extract,$data)=@_; 
+    foreach my $i (values %$data) {
+        foreach (keys %{$i->{$extract}}) {
+            $acc{$_} += $i->{$extract}{$_};
+        }
+    }
+    return \%acc;
+}
+
 
 sub _json {
     my ($self, $ds) = @_;
