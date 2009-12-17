@@ -304,6 +304,7 @@ sub pageHeader {
 <script language="javascript" type="text/javascript" src="../extras/jquery.js"></script>
 <script language="javascript" type="text/javascript" src="../extras/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="../extras/jquery.flot.selection.js"></script>
+<script language="javascript" type="text/javascript" src="../extras/jquery.flot.crosshair.js"></script> 
 </head>
 <body>
 <div class="yui-skin-sam">

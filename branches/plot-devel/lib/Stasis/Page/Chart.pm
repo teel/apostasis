@@ -92,11 +92,13 @@ sub page {
         actor => \@raiders, 
         -target => \@raiders, 
         expand => [ "actor" ], 
-        fields => [ qw/hitTotal critTotal tickTotal/ ]
+        fields => [ qw/hitTotal critTotal tickTotal damageAtTime/ ]
     );
-    
+
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$deOut );
-    
+
+    my $damageAtTimeAcc; #ref to accumulated data
+
     while( my ($kactor, $ractor) = each %{$self->{raid}} ) {
         # Only show raiders
         next unless $ractor->{class} && $self->{ext}{Presence}->presence($kactor);
@@ -107,53 +109,33 @@ sub page {
         
         $raiderDamage{$raider} += $deOut->{$kactor}{total} || 0 if $deOut->{$kactor};
         push @{$raiderSpans{$raider}}, @{$actOut->{$kactor}{spans}} if $actOut->{$kactor} && $actOut->{$kactor}{spans};
+        if ($self->{plot}) { foreach (keys %{$deOut->{$kactor}{damageAtTime}}) { $damageAtTimeAcc->{$_} += ${$deOut->{$kactor}{damageAtTime}}{$_};} }
     }
-    
     foreach (values %raiderDamage) {
         $raidDamage += $_;
     }
     
-    #Prepare damageAtTime data if we are making a plot
-    my $damageAtTime;
-    my $damageAtTimeAcc; #ref to accumulated data
-    if ($self->{plot}) { #Use damageAtTime
-        $damageAtTime = $self->{ext}{Damage}->sum(
-            actor => \@raiders, 
-            -target => \@raiders, 
-            expand => [ "actor" ], 
-            fields => [ "damageAtTime" ]
-        );
-        $damageAtTimeAcc=$self->_accumulateAtTime("damageAtTime",$damageAtTime);
-    }
+
 
     # Calculate incoming damage
     my $raidInDamage = 0;
     my $deInAll = $self->{ext}{Damage}->sum( 
         target => \@raiders, 
         expand => [ "target" ], 
-        fields => [ qw/hitTotal critTotal tickTotal/ ]
+        fields => [ qw/hitTotal critTotal tickTotal damageAtTime/ ]
     );
     
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$deInAll );
 
-    #Prepare dinAtTime data if we are making a plot
-    my $dinAtTime;
     my $dinAtTimeAcc; #ref to accumulated data
-    if ($self->{plot}) { #Use dinAtTime
-        $dinAtTime = $self->{ext}{Damage}->sum(
-            target => \@raiders, 
-            expand => [ "target" ], 
-            fields => [ "damageAtTime" ]
-        );
-        $dinAtTimeAcc=$self->_accumulateAtTime("damageAtTime",$dinAtTime);
-    }
-    
+
     while( my ($kactor, $ractor) = each %{$self->{raid}} ) {
         # Only show raiders
         next if !$ractor->{class} || $ractor->{class} eq "Pet" || !$self->{ext}{Presence}->presence($kactor);
         
         $raiderIncoming{$kactor} += $deInAll->{$kactor}{total} || 0 if $deInAll->{$kactor};
         $raidInDamage += $deInAll->{$kactor}{total} || 0 if $deInAll->{$kactor};
+        if ($self->{plot}) { foreach (keys %{$deInAll->{$kactor}{damageAtTime}}) { $dinAtTimeAcc->{$_} += ${$deInAll->{$kactor}{damageAtTime}}{$_};} }
     }
 
 	# Calculate death count
@@ -178,24 +160,13 @@ sub page {
         actor => \@raiders, 
         target => \@raiders, 
         expand => [ "actor" ], 
-        fields => [ qw/hitEffective critEffective tickEffective hitTotal critTotal tickTotal/ ]
+        fields => [ qw/hitEffective critEffective tickEffective hitTotal critTotal tickTotal healingAtTime/ ]
     );
     
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$heOutFriendly );
     $_->{effective} = $self->_addHCT( $_, "Effective" ) foreach ( values %$heOutFriendly );
 
-    #Prepare healingAtTime data if we are making a plot
-    my $healingAtTime;
     my $healingAtTimeAcc; #ref to accumulated data
-    if ($self->{plot}) { #Use healingAtTime
-        $healingAtTime = $self->{ext}{Healing}->sum(
-            actor => \@raiders, 
-            target => \@raiders, 
-            expand => [ "actor" ], 
-            fields => [ "healingAtTime" ]
-        );
-        $healingAtTimeAcc=$self->_accumulateAtTime("healingAtTime",$healingAtTime);
-    }
     
     while( my ($kactor, $ractor) = each (%{$self->{raid}}) ) {
         # Only show raiders
@@ -211,6 +182,7 @@ sub page {
 		
         $raidHealing += $heOutFriendly->{$kactor}{effective} || 0;
         $raidHealingTotal += $heOutFriendly->{$kactor}{total} || 0;
+        if ($self->{plot}) { foreach (keys %{$heOutFriendly->{$kactor}{healingAtTime}}) { $healingAtTimeAcc->{$_} += ${$heOutFriendly->{$kactor}{healingAtTime}}{$_};} }
 		
     }
     

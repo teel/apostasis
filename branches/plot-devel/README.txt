@@ -15,7 +15,9 @@ up committing to the trunk.
 * output files can be large and slow to parse. This is probably
 unavoidable for the most part but might be alleviated in cases where
 outputs are zero for a long stretch, e.g. between boss attempts in an
--overall parse.
+-overall parse. edit: patched in fix for long stretches of zeroes,
+performance still low so might want to enforce smoothing on long 
+parses, once smoothing is available.
 
 * there are minor peculiarities with the interaction between tabbing
 and plotting - flot does not handle well the situation where plots are
