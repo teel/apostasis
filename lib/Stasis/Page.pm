@@ -219,19 +219,6 @@ sub _rowHealing {
 	};
 }
 
-sub _accumulateAtTime {
-    #Accumulate various *atTime fields into a single hash
-    my %acc; #Holds the accumulated hash we'll return
-    my ($self,$extract,$data)=@_; 
-    foreach my $i (values %$data) {
-        foreach (keys %{$i->{$extract}}) {
-            $acc{$_} += $i->{$extract}{$_};
-        }
-    }
-    return \%acc;
-}
-
-
 sub _json {
     my ($self, $ds) = @_;
     

@@ -36,6 +36,29 @@ use Stasis::Extension qw/span_sum/;
 
 our @ISA = "Stasis::Page";
 
+sub array_smooth {
+    #smooth an array using a moving average, $smooth parameter is how many above and below central value
+    #so for example $smooth=1 is a window of width 3
+    my ($aref,$smooth) = @_;
+    my @array=@$aref;
+    my @output;
+    my @temp;
+    my $low; my $high; my $length;
+    
+    for (my $i=0; $i<$#array; $i++) {
+        $length=0;
+        my $low = $i-$smooth < 0 ? 0 : $i-$smooth;
+        my $high = $i+$smooth > $#array-1 ? $#array-1 : $i+$smooth;
+        foreach (@array[$low .. $high]) {$temp[$i] += $_ ; $length++;}
+        $temp[$i] /= $length;
+    }
+    
+    for (my $i=0; $i<$#temp; $i+=$smooth) {
+        push @output, $temp[$i];
+    }
+    return \@output;
+}
+
 sub page {
     my $self = shift;
     
@@ -138,13 +161,13 @@ sub page {
         if ($self->{plot}) { foreach (keys %{$deInAll->{$kactor}{damageAtTime}}) { $dinAtTimeAcc->{$_} += ${$deInAll->{$kactor}{damageAtTime}}{$_};} }
     }
 
-	# Calculate death count
-	my %deathCount;
+    # Calculate death count
+    my %deathCount;
     foreach my $deathevent (keys %{$self->{ext}{Death}{actors}}) {
         if ($self->{raid}{$deathevent} && 
             $self->{raid}{$deathevent}{class} &&
             $self->{raid}{$deathevent}{class} ne "Pet") {
-				$deathCount{$deathevent} = @{$self->{ext}{Death}{actors}{$deathevent}};
+                $deathCount{$deathevent} = @{$self->{ext}{Death}{actors}{$deathevent}};
         }
     }
     
@@ -179,11 +202,11 @@ sub page {
         $raiderHealing{$raider} += $heOutFriendly->{$kactor}{effective} || 0 if $heOutFriendly->{$kactor};
         $raiderHealingTotal{$raider} += $heOutFriendly->{$kactor}{total} || 0 if $heOutFriendly->{$kactor};
         
-		
+        
         $raidHealing += $heOutFriendly->{$kactor}{effective} || 0;
         $raidHealingTotal += $heOutFriendly->{$kactor}{total} || 0;
         if ($self->{plot}) { foreach (keys %{$heOutFriendly->{$kactor}{healingAtTime}}) { $healingAtTimeAcc->{$_} += ${$heOutFriendly->{$kactor}{healingAtTime}}{$_};} }
-		
+        
     }
     
     ############
@@ -248,57 +271,57 @@ sub page {
     my ($DAMTYPE_OUT, $DAMTYPE_DPS) = (1,2);
     foreach my $damtype ($DAMTYPE_OUT, $DAMTYPE_DPS) {
 
-	$PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
-	$PAGE .= $pm->tableStart();
-	$PAGE .= $pm->tableHeader((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"), @damageHeader);
+    $PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
+    $PAGE .= $pm->tableStart();
+    $PAGE .= $pm->tableHeader((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"), @damageHeader);
     
-	if ($damtype == $DAMTYPE_OUT) {
-	    @damagesort = sort {
-		$raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
-		} keys %raiderDamage;
-	} else {
-	    @damagesort = sort {
-		$raiderDPS{$b} <=> $raiderDPS{$a} || $a cmp $b
-		} keys %raiderDPS;
-	}
+    if ($damtype == $DAMTYPE_OUT) {
+        @damagesort = sort {
+        $raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
+        } keys %raiderDamage;
+    } else {
+        @damagesort = sort {
+        $raiderDPS{$b} <=> $raiderDPS{$a} || $a cmp $b
+        } keys %raiderDPS;
+    }
     
-	my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
-	my $mostdps = keys %raiderDPS && $raiderDPS{ $damagesort[0] };
-	
-	foreach my $actor (@damagesort) {
-	    my $ptime = $self->{ext}{Presence}->presence($actor);
+    my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
+    my $mostdps = keys %raiderDPS && $raiderDPS{ $damagesort[0] };
+    
+    foreach my $actor (@damagesort) {
+        my $ptime = $self->{ext}{Presence}->presence($actor);
 
-	    my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
-	    $raiderDPS{$actor} = $raiderDamage{$actor} && $dpsTime && ($raiderDamage{$actor} / $dpsTime);
+        my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
+        $raiderDPS{$actor} = $raiderDamage{$actor} && $dpsTime && ($raiderDamage{$actor} / $dpsTime);
         
-	    my ($perc, $chart);
-	    if ($damtype == $DAMTYPE_OUT) {
-		$perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
-		$chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
+        my ($perc, $chart);
+        if ($damtype == $DAMTYPE_OUT) {
+        $perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
+        $chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
 
-	    } else {
-		$perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
-		$chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
-	    }
+        } else {
+        $perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
+        $chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
+        }
 
-	    $PAGE .= $pm->tableRow( 
-				    header => \@damageHeader,
-				    data => {
-					"Player" => $pm->actorLink( $actor ),
-					"R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
-					"R-%" => $perc,
-					"R-Dam. Out" => $raiderDamage{$actor},
-					" " => $chart,
-					"R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
-					"R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
-					"R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
-				    },
-				    type => "",
-				    );
-	}
+        $PAGE .= $pm->tableRow( 
+                    header => \@damageHeader,
+                    data => {
+                    "Player" => $pm->actorLink( $actor ),
+                    "R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
+                    "R-%" => $perc,
+                    "R-Dam. Out" => $raiderDamage{$actor},
+                    " " => $chart,
+                    "R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
+                    "R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
+                    "R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
+                    },
+                    type => "",
+                    );
+    }
     
-	$PAGE .= $pm->tableEnd;
-	$PAGE .= $pm->tabEnd;
+    $PAGE .= $pm->tableEnd;
+    $PAGE .= $pm->tabEnd;
     }
 
     #########################
@@ -562,42 +585,65 @@ sub page {
         my @dintimestamps=keys %$dinAtTimeAcc;
         my @timestamps=sort (@dpstimestamps,@healingtimestamps,@dintimestamps);
         my $mintime=$timestamps[0]; my $maxtime=$timestamps[-1];
-	    
+        
+        #First check if we need to smooth at all
+        my $smooth;
+        my $maxNtimestamps = 1200; #20 minutes
+        if ($maxtime-$mintime > $maxNtimestamps) { $smooth = int (0.5+($maxtime-$mintime)/(2*$maxNtimestamps));} else {$smooth = 0}
+        
+        #Arrange in arrays and smooth if needed
+        my @damageAtTimeArr; my @healingAtTimeArr; my @dinAtTimeArr; my @timeArr;
+        for (my $i=$mintime; $i<=$maxtime; $i++) {
+            if (exists $damageAtTimeAcc->{$i}) {$damageAtTimeArr[$i-$mintime] = $damageAtTimeAcc->{$i}} else {$damageAtTimeArr[$i-$mintime] = 0}
+            if (exists $healingAtTimeAcc->{$i}) {$healingAtTimeArr[$i-$mintime] = $healingAtTimeAcc->{$i}} else {$healingAtTimeArr[$i-$mintime] = 0}
+            if (exists $dinAtTimeAcc->{$i}) {$dinAtTimeArr[$i-$mintime] = $dinAtTimeAcc->{$i}} else {$dinAtTimeArr[$i-$mintime] = 0}
+            $timeArr[$i-$mintime]=$i;
+        }
+        
+        if ($smooth) {
+            @damageAtTimeArr=@{array_smooth(\@damageAtTimeArr,$smooth)};
+            @healingAtTimeArr=@{array_smooth(\@healingAtTimeArr,$smooth)};
+            @dinAtTimeArr=@{array_smooth(\@dinAtTimeArr,$smooth)};
+            @timeArr=@{array_smooth(\@timeArr,$smooth)};
+        }
+        
+        #Now write the strings out
+        
         my $dpsString="[";
         my $healString="[";
         my $dinString="[";
-        
         #These three hold the last value we used so we can skip repeat zero values to keep page sizes down in long parses
         #The time ones are used to make sure we don't repeat a write when we have to write out the entry before
         my $lastDout=0; my $lastDoutTime=0;
         my $lastHeal=0; my $lastHealTime=0;
         my $lastDin=0; my $lastDinTime=0;
         
-        for (my $i=$mintime; $i<=$maxtime; $i++) {
-	        if (exists $damageAtTimeAcc->{$i}) {
-	    	    if (!$lastDout && $i-1 != $lastDoutTime) { $dpsString.="[". ($i-1) ."000,0],"; }
-	    	    $dpsString.="[$i"."000,".$damageAtTimeAcc->{$i}."],";
-	    	    $lastDout = $damageAtTimeAcc->{$i}; $lastDoutTime=$i;
-	        } elsif ($lastDout) { $dpsString.="[". $i ."000,0],"; $lastDout=0; $lastDoutTime=$i;}
-	        if (exists $healingAtTimeAcc->{$i}) {
-	            if (!$lastHeal && $i-1 != $lastHealTime) { $healString.="[". ($i-1) ."000,0],"; }
-	            $healString.="[$i"."000,".$healingAtTimeAcc->{$i}."],"; 
-	            $lastHeal=$healingAtTimeAcc->{$i}; $lastHealTime=$i;
-	        } elsif ($lastHeal) { $healString.="[". $i ."000,0],"; $lastHeal=0; $lastHealTime=$i;}
-	        if (exists $dinAtTimeAcc->{$i}) {
-	            if (!$lastDin && $i-1 != $lastDinTime) { $dinString.="[". ($i-1) ."000,0],"; }
-	            $dinString.="[$i"."000,".$dinAtTimeAcc->{$i}."],";
-	            $lastDin = $dinAtTimeAcc->{$i}; $lastDinTime=$i;
-	        } elsif ($lastDin) { $dinString.="[". $i ."000,0],"; $lastDin=0; $lastDinTime=$i;}
-        }
-       $dpsString =~ s/,$/]/; #closes the array
-	   $healString =~ s/,$/]/; #closes the array
-       $dinString =~ s/,$/]/; #closes the array
-	    
-	    #Prepare the page
-	    my @plotHeader = ( "Damage out (red), Healing (blue), Damage in (black)");
-		
-	    $PAGE .= $pm->tabStart("Plot");
+        for (my $i=0; $i<$#timeArr; $i++) {
+            if ($damageAtTimeArr[$i]) {
+                    if ($i-1 >=0 && (!$lastDout && $i-1 != $lastDoutTime)) { $dpsString.="[". $timeArr[$i-1] ."000,0],"; }
+                    $dpsString.="[".$timeArr[$i]."000,".$damageAtTimeArr[$i]."],";
+                    $lastDout = $damageAtTimeArr[$i]; $lastDoutTime=$i;
+            } elsif ($lastDout) { $dpsString.="[". $timeArr[$i] ."000,0],"; $lastDout=0; $lastDoutTime=$i;}
+            if ($healingAtTimeArr[$i]) {
+                if ($i-1 >= 0 && (!$lastHeal && $i-1 != $lastHealTime)) { $healString.="[". $timeArr[$i-1] ."000,0],"; }
+                $healString.="[".$timeArr[$i]."000,".$healingAtTimeArr[$i]."],"; 
+                $lastHeal=$healingAtTimeArr[$i]; $lastHealTime=$i;
+            } elsif ($lastHeal) { $healString.="[". $timeArr[$i] ."000,0],"; $lastHeal=0; $lastHealTime=$i;}
+            if (exists $dinAtTimeArr[$i]) {
+                if ($i-1 >= 0 && (!$lastDin && $i-1 != $lastDinTime)) { $dinString.="[". $timeArr[$i-1] ."000,0],"; }
+                $dinString.="[".$timeArr[$i]."000,".$dinAtTimeArr[$i]."],";
+                $lastDin = $dinAtTimeArr[$i]; $lastDinTime=$i;
+            } elsif ($lastDin) { $dinString.="[". $timeArr[$i] ."000,0],"; $lastDin=0; $lastDinTime=$i;}
+        } 
+       
+        $dpsString =~ s/,$/]/; #closes the array
+        $healString =~ s/,$/]/; #closes the array
+        $dinString =~ s/,$/]/; #closes the array
+        
+        #Prepare the page
+        my @plotHeader = ( "Damage out (red), Healing (blue), Damage in (black)");
+        
+        $PAGE .= $pm->tabStart("Plot");
         $PAGE .= $pm->tableStart();
         $PAGE .= $pm->tableHeader("Plot", @plotHeader);
         $PAGE .= $pm->tableEnd;
@@ -658,9 +704,10 @@ sub page {
 </script>        
 
 END
+        if ($smooth) {$PAGE .= "<div>Smoothed with window of +- $smooth seconds.</div>\n";}
         $PAGE .= $pm->tabEnd;
         
-	}
+    }
     #####################
     # PRINT HTML FOOTER #
     #####################
@@ -675,7 +722,7 @@ END
         # PRINT OPENING XML TAG #
         #########################
         
- 	$XML .= sprintf( '  <raid dpstime="%d" start="%s" dps="%d" comment="%s" lg="%d" dmg="%d" dir="%s" zone="%s" heroic="%d">' . "\n",            100,
+     $XML .= sprintf( '  <raid dpstime="%d" start="%s" dps="%d" comment="%s" lg="%d" dmg="%d" dir="%s" zone="%s" heroic="%d">' . "\n",            100,
             $raidStart*1000,
             $raidDPS,
             $self->{name},
@@ -683,7 +730,7 @@ END
             $raidDamage,
             $self->{dirname},
             Stasis::LogSplit->zone( $self->{short} ) || "",
-			$self->{heroic} || 0,
+            $self->{heroic} || 0,
         );
 
         #########################
