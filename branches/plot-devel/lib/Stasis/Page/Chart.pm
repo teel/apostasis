@@ -266,62 +266,75 @@ sub page {
             " ",
         );
 
-    # Damage Out, then DPS
-    my @damagesort;
-    my ($DAMTYPE_OUT, $DAMTYPE_DPS) = (1,2);
-    foreach my $damtype ($DAMTYPE_OUT, $DAMTYPE_DPS) {
+   # Damage Out, then DPS
 
-    $PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
+   my @damagesort;
+
+   my ($DAMTYPE_OUT, $DAMTYPE_DPS) = (1,2);
+    foreach my $damtype ($DAMTYPE_OUT, $DAMTYPE_DPS) {
+        $PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
+   
     $PAGE .= $pm->tableStart();
+   
     $PAGE .= $pm->tableHeader((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"), @damageHeader);
-    
+   
     if ($damtype == $DAMTYPE_OUT) {
+   
         @damagesort = sort {
+       
         $raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
-        } keys %raiderDamage;
+            } keys %raiderDamage;
+   
     } else {
+   
         @damagesort = sort {
+       
         $raiderDPS{$b} <=> $raiderDPS{$a} || $a cmp $b
+   
         } keys %raiderDPS;
+   
     }
     
     my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
     my $mostdps = keys %raiderDPS && $raiderDPS{ $damagesort[0] };
-    
     foreach my $actor (@damagesort) {
-        my $ptime = $self->{ext}{Presence}->presence($actor);
-
+    
+   my $ptime = $self->{ext}{Presence}->presence($actor);
         my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
         $raiderDPS{$actor} = $raiderDamage{$actor} && $dpsTime && ($raiderDamage{$actor} / $dpsTime);
-        
         my ($perc, $chart);
         if ($damtype == $DAMTYPE_OUT) {
-        $perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
-        $chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
-
+        
+   $perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
+            $chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
         } else {
-        $perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
-        $chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
+            $perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
+            $chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
         }
 
-        $PAGE .= $pm->tableRow( 
-                    header => \@damageHeader,
-                    data => {
-                    "Player" => $pm->actorLink( $actor ),
-                    "R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
-                    "R-%" => $perc,
-                    "R-Dam. Out" => $raiderDamage{$actor},
-                    " " => $chart,
-                    "R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
-                    "R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
-                    "R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
-                    },
-                    type => "",
-                    );
-    }
+        
+        $PAGE .= $pm->tableRow(
+            header => \@damageHeader,
+            data => {
+            
+   "Player" => $pm->actorLink( $actor ),
+                "R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
+                "R-%" => $perc,
+                "R-Dam. Out" => $raiderDamage{$actor},
+                " " => $chart,
+                "R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
+                "R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
+                "R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
+            },
+            type => "",
+            );
     
-    $PAGE .= $pm->tableEnd;
-    $PAGE .= $pm->tabEnd;
+        }
+    
+        $PAGE .= $pm->tableEnd;
+    
+        $PAGE .= $pm->tabEnd;
+    
     }
 
     #########################
