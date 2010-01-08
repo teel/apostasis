@@ -1120,9 +1120,9 @@ our @fingerprints = (
 	short		=> "gunship",
 	zone		=> "icecrown",
 	long		=> "Gunship",
-	mobStart	=> [ 37200, 37187 ],
-	mobContinue	=> [ 37200, 37187 ],
-	mobEnd		=> [ 37200, 37187 ],
+	mobStart	=> [ 37215, 37540 ],
+	mobContinue	=> [ 37215, 37540 ],
+	mobEnd		=> [ 37215, 37540 ],
 	timeout		=> 30,
 	heroic		=> [ ], 
 	normal		=> [ ], 
@@ -1140,7 +1140,44 @@ our @fingerprints = (
 	normal		=> [ 72385, 72442], #Boiling Blood
 	
 },
-
+{
+	
+	short		=> "rotface",
+	zone		=> "icecrown",
+	long		=> "Rotface",
+	mobStart	=> [ 36627  ],
+	mobContinue	=> [ 36627, 36899, 36897 ],
+	mobEnd		=> [ 36627 ],
+	timeout		=> 30,
+	heroic		=> [73022, 73023],#Mutated infection
+	normal		=> [69674, 71224],#Mutated infection
+	
+},
+{
+	
+	short		=> "festergut",
+	zone		=> "icecrown",
+	long		=> "Festergut",
+	mobStart	=> [ 36626  ],
+	mobContinue	=> [ 36626 ],
+	mobEnd		=> [ 36626 ],
+	timeout		=> 30,
+	heroic		=> [ 72229, 72230 ], #Gastric Explosion
+	normal		=> [ 72227 ], #Gastric Explosion
+},
+{
+	
+	short		=> "putricide",
+	zone		=> "icecrown",
+	long		=> "Professor Putricide",
+	mobStart	=> [ 36678  ],
+	mobContinue	=> [ 36678, 37672, 37562 ],
+	mobEnd		=> [ 36678 ],
+	timeout		=> 30,
+	heroic		=> [ 72619 ], #Choking Gas
+	normal		=> [ 71278 ], #Choking Gas
+	
+}
 
 );
 
