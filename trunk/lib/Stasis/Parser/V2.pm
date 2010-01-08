@@ -171,7 +171,8 @@ sub parse {
 }
 
 my $stamp_regex = qr/^(\d+)\/(\d+) (\d+):(\d+):(\d+)\.(\d+)  (.*?)[\r\n]*$/s;
-my $csv_regex = qr{"?,(?=".*?"(?:,|$)|[^",]+(?:,|$))"?};
+my $csv_regex_old = qr{"?,(?=".*?"(?:,|$)|[^",]+(?:,|$))"?};
+my $csv_regex = qr/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/;
 
 sub _split {
     my ( $self, $line ) = @_;
@@ -186,10 +187,10 @@ sub _split {
             0,                       # wday
             0,                       # yday
             -1                       # is_dst
-        ) + $6 / 1000, map { $_ eq "nil" ? "" : $_ } split $csv_regex, $7;
+        ) + $6 / 1000, map { $_ eq "nil" ? "" : $_ } map {s/"//g; $_;} split $csv_regex, $7;
     } else {
         # Couldn't recognize time
-        return 0, map { $_ eq "nil" ? "" : $_ } split $csv_regex, $line;
+        return 0, map { $_ eq "nil" ? "" : $_ } map {s/"//g; $_;} split $csv_regex, $line;
     }
 }
 
