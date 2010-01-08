@@ -666,23 +666,69 @@ sub page {
         $PAGE .= <<END;
 <div id="mainplot" style="width:700px;height:300px;"></div>
 <div id="miniplot" style="width:700px;height:100px;"></div>
+<div id="plothover"></div>
 <script id="source" language="javascript" type="text/javascript">
 \$(function () {
     var dps = $dpsString;
     var heal = $healString;
     var din = $dinString;
     var options = {
-        legend: { show: false },
         series: {
             lines: { show: true },
             points: { show: false }
         },
         xaxis: { mode: "time", ticks: 6 },
         yaxis: { ticks: 10 },
-        selection: { mode: "x" }
+        selection: { mode: "x" },
+        crosshair: {mode: "x" },
+        grid: { hoverable: true, autoHighlight: false }
     };
     
-    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ], options);
+    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"} ], options);
+    var legends = \$("#mainplot .legendLabel");
+    legends.each(function () {
+        // fix the widths so they don't jump around
+        \$(this).css('width', \$(this).width());
+    });
+
+    var updateLegendTimeout = null;
+    var latestPosition = null;
+    
+    function updateLegend() {
+        updateLegendTimeout = null;
+        
+        var pos = latestPosition;
+        var axes = mainplot.getAxes();
+        if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+            pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
+            return;
+
+        var i, j, dataset = mainplot.getData();
+        for (i = 0; i < dataset.length; ++i) {
+            var series = dataset[i];
+
+            // find the nearest points, x-wise
+            for (j = 0; j < series.data.length; ++j)
+                if (series.data[j][0] > pos.x)
+                    break;
+            
+            // now interpolate
+            var y, p1 = series.data[j - 1], p2 = series.data[j];
+            if (p1 == null)
+                y = p2[1];
+            else if (p2 == null)
+                y = p1[1];
+            else
+                y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+            legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(0)));
+        }
+    }
+    
+    \$("#mainplot").bind("plothover",  function (event, pos, item) {
+        latestPosition = pos;
+        if (!updateLegendTimeout)
+            updateLegendTimeout = setTimeout(updateLegend, 50);
+    });
 
     var miniplot = \$.plot(\$("#miniplot"), [ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ], {
         legend: { show: false },
@@ -702,17 +748,23 @@ sub page {
             ranges.xaxis.to = ranges.xaxis.from + 0.00001;
         
         // do the zooming
-        mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ],
+        mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"} ],
                       \$.extend(true, {}, options, {
                           xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
                       }));
-        
+        // reset legends
+        legends = \$("#mainplot .legendLabel");
+        legends.each(function () {
+        // fix the widths so they don't jump around
+        \$(this).css('width', \$(this).width());
+    });
         // don't fire event on the overview to prevent eternal loop
         miniplot.setSelection(ranges, true);
     });
     \$("#miniplot").bind("plotselected", function (event, ranges) {
         mainplot.setSelection(ranges);
     });
+    
 });
 </script>        
 
