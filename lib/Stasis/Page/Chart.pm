@@ -684,7 +684,7 @@ sub page {
         grid: { hoverable: true, autoHighlight: false }
     };
     
-    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"} ], options);
+    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = -------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = -------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = -------"} ], options);
     var legends = \$("#mainplot .legendLabel");
     legends.each(function () {
         // fix the widths so they don't jump around
@@ -748,7 +748,7 @@ sub page {
             ranges.xaxis.to = ranges.xaxis.from + 0.00001;
         
         // do the zooming
-        mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"} ],
+        mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = -------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = -------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = -------"} ],
                       \$.extend(true, {}, options, {
                           xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
                       }));
