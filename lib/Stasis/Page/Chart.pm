@@ -633,20 +633,20 @@ sub page {
         
         for (my $i=0; $i<$#timeArr; $i++) {
             if ($damageAtTimeArr[$i]) {
-                    if ($i-1 >=0 && (!$lastDout && $i-1 != $lastDoutTime)) { $dpsString.="[". $timeArr[$i-1] ."000,0],"; }
-                    $dpsString.="[".$timeArr[$i]."000,".$damageAtTimeArr[$i]."],";
+                    if ($i-1 >=0 && (!$lastDout && $i-1 != $lastDoutTime)) { $dpsString.="[". $timeArr[$i-1]*1000 .",0],"; }
+                    $dpsString.="[".$timeArr[$i]*1000 .",".$damageAtTimeArr[$i]."],";
                     $lastDout = $damageAtTimeArr[$i]; $lastDoutTime=$i;
-            } elsif ($lastDout) { $dpsString.="[". $timeArr[$i] ."000,0],"; $lastDout=0; $lastDoutTime=$i;}
+            } elsif ($lastDout) { $dpsString.="[". $timeArr[$i]*1000 .",0],"; $lastDout=0; $lastDoutTime=$i;}
             if ($healingAtTimeArr[$i]) {
-                if ($i-1 >= 0 && (!$lastHeal && $i-1 != $lastHealTime)) { $healString.="[". $timeArr[$i-1] ."000,0],"; }
-                $healString.="[".$timeArr[$i]."000,".$healingAtTimeArr[$i]."],"; 
+                if ($i-1 >= 0 && (!$lastHeal && $i-1 != $lastHealTime)) { $healString.="[". $timeArr[$i-1]*1000 .",0],"; }
+                $healString.="[".$timeArr[$i]*1000 .",".$healingAtTimeArr[$i]."],"; 
                 $lastHeal=$healingAtTimeArr[$i]; $lastHealTime=$i;
-            } elsif ($lastHeal) { $healString.="[". $timeArr[$i] ."000,0],"; $lastHeal=0; $lastHealTime=$i;}
+            } elsif ($lastHeal) { $healString.="[". $timeArr[$i]*1000 .",0],"; $lastHeal=0; $lastHealTime=$i;}
             if (exists $dinAtTimeArr[$i]) {
-                if ($i-1 >= 0 && (!$lastDin && $i-1 != $lastDinTime)) { $dinString.="[". $timeArr[$i-1] ."000,0],"; }
-                $dinString.="[".$timeArr[$i]."000,".$dinAtTimeArr[$i]."],";
+                if ($i-1 >= 0 && (!$lastDin && $i-1 != $lastDinTime)) { $dinString.="[". $timeArr[$i-1]*1000 .",0],"; }
+                $dinString.="[".$timeArr[$i]*1000 .",".$dinAtTimeArr[$i]."],";
                 $lastDin = $dinAtTimeArr[$i]; $lastDinTime=$i;
-            } elsif ($lastDin) { $dinString.="[". $timeArr[$i] ."000,0],"; $lastDin=0; $lastDinTime=$i;}
+            } elsif ($lastDin) { $dinString.="[". $timeArr[$i]*1000 .",0],"; $lastDin=0; $lastDinTime=$i;}
         } 
        
         $dpsString =~ s/,$/]/; #closes the array
