@@ -1177,6 +1177,29 @@ our @fingerprints = (
 	heroic		=> [ 72619 ], #Choking Gas
 	normal		=> [ 71278 ], #Choking Gas
 	
+},
+{
+    short           => "bloodprince",
+    zone            => "icecrown",
+    long            => "Blood Prince Council",
+    mobStart        => [ 37970, 37972, 37973 ],
+    mobContinue     => [ 37970, 37972, 37973 ],
+    mobEnd          => [ 37970, 37972, 37973 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+    endAll      => 1,
+},
+{
+    short           => "bloodqueen",
+    zone            => "icecrown",
+    long            => "Blood-Queen Lana'thel",
+    mobStart        => [ 37955 ],
+    mobContinue     => [ 37955 ],
+    mobEnd          => [ 37955 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
 }
 
 );
