@@ -1188,7 +1188,18 @@ our @fingerprints = (
     timeout         => 30,
     heroic          => [ ],
     normal          => [ ],
-
+    endAll      => 1,
+},
+{
+    short           => "bloodqueen",
+    zone            => "icecrown",
+    long            => "Blood-Queen Lana'thel",
+    mobStart        => [ 37955 ],
+    mobContinue     => [ 37955 ],
+    mobEnd          => [ 37955 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
 }
 
 );
