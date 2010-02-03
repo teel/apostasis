@@ -836,6 +836,16 @@ our @fingerprints = (
 },
 
 {
+    short       => "toravon",
+    zone        => "archavon",
+    long        => "Toravon",
+    mobStart    => [ 38433 ],
+    mobContinue => [ 38433 ],
+    mobEnd      => [ 38433 ],
+    timeout     => 30,
+},
+
+{
     short       => "malygos",
     zone        => "eyeofeternity",
     long        => "Malygos",
