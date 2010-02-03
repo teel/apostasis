@@ -37,7 +37,7 @@ sub start {
     $self->{actors} = {};
     $self->{ohtrack} = {};
     $self->{dtrack} = {};
-    $self->{_autopsylen} = 40;
+    $self->{_autopsylen} = 80;
 }
 
 sub actions {
