@@ -1210,7 +1210,123 @@ our @fingerprints = (
     timeout         => 30,
     heroic          => [ ],
     normal          => [ ],
+},
+{
+    short           => "valithria",
+    zone            => "icecrown",
+    long            => "Valithria Dreamwalker",
+    mobStart        => [ 37868 ],
+    mobContinue     => [ 36789, 37868],
+    mobEnd          => [ 36789 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+	endFriendly		=> 1,
+	endUltimate		=> 1,
+
+},
+{
+    short           => "sindragosa",
+    zone            => "icecrown",
+    long            => "Sindragosa",
+    mobStart        => [ 36853 ],
+    mobContinue     => [ 36853 ],
+    mobEnd          => [ 36853 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+
+{
+    short           => "theking",
+    zone            => "icecrown",
+    long            => "The Lich King",
+    mobStart        => [ 29983 ],
+    mobContinue     => [ 29983 ],
+    mobEnd          => [ 29983 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+
+###################
+# ICC MINI BOSSES #
+###################
+{
+    short           => "stinky",
+    zone            => "icecrown",
+    long            => "Stinky",
+    mobStart        => [ 37025 ],
+    mobContinue     => [ 37025 ],
+    mobEnd          => [ 37025 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+{
+    short           => "precious",
+    zone            => "icecrown",
+    long            => "Precious",
+    mobStart        => [ 37217 ],
+    mobContinue     => [ 37217 ],
+    mobEnd          => [ 37217 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+{
+    short           => "giant",
+    zone            => "icecrown",
+    long            => "Rotting Frost Giant",
+    mobStart        => [ 38490 ],
+    mobContinue     => [ 38490 ],
+    mobEnd          => [ 38490 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+{
+    short           => "svalna",
+    zone            => "icecrown",
+    long            => "Sister Svalna",
+    mobStart        => [ 37126 ],
+    mobContinue     => [ 37126 ],
+    mobEnd          => [ 37126 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+{
+    short           => "rimefang",
+    zone            => "icecrown",
+    long            => "Rimefang",
+    mobStart        => [ 37533 ],
+    mobContinue     => [ 37533 ],
+    mobEnd          => [ 37533 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+},
+{
+    short           => "spinestalker",
+    zone            => "icecrown",
+    long            => "Spinestalker",
+    mobStart        => [ 37534 ],
+    mobContinue     => [ 37534 ],
+    mobEnd          => [ 37534 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
 }
+
 
 );
 
@@ -1379,7 +1495,11 @@ sub process {
             # Check if target turned friendly (Thorim, Freya, Hodir, et al.)
             elsif( $hfingerprints{$kboss}{endFriendly} ) {
                 if( ($fend{$target_id} && $fend{$target_id} eq $kboss && ($event->{target_relationship} & 0xF0) == 16) ||
-                    ($fend{$actor_id}  && $fend{$actor_id}  eq $kboss && ($event->{actor_relationship}  & 0xF0) == 16) ) {
+                    ($fend{$actor_id}  && $fend{$actor_id}  eq $kboss && ($event->{actor_relationship}  & 0xF0) == 16) ) 
+                   { 
+					if( $hfingerprints{$kboss}{endUltimate} && $event->{spellid} == 71189) 
+					{                   
+                    
                     $self->_bend(
                         {
                             short => $kboss,
@@ -1389,7 +1509,21 @@ sub process {
                             kill  => 1,
                         }
                     );
-                }
+					}
+					elsif( !$hfingerprints{$kboss}{endUltimate})
+					{                   
+                    
+                    $self->_bend(
+                        {
+                            short => $kboss,
+                            long  => $hfingerprints{ $kboss }{long},
+                            start => $vboss->{start},
+                            end   => $vboss->{end},
+                            kill  => 1,
+                        }
+                    );
+					}
+					}
             }
         }
     } else {
