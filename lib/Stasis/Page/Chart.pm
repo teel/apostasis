@@ -181,7 +181,7 @@ sub page {
     # Friendly healing by raiders and their pets
     my $heOutFriendly = $self->{ext}{Healing}->sum( 
         actor => \@raiders, 
-        target => \@raiders, 
+        #target => \@raiders, 
         expand => [ "actor" ], 
         fields => [ qw/hitEffective critEffective tickEffective hitTotal critTotal tickTotal healingAtTime/ ]
     );
