@@ -106,6 +106,27 @@ sub page {
         expand => [ "actor" ],
     );
     
+    #############################
+    # AURAS - HEROISM/BLOODLUST #
+    #############################
+    
+    #used in plots
+    my (@herostart,@heroend);
+    my $heroism = $self->{ext}{Aura}->sum(
+        actor => \@raiders,
+        spell => [32182,2825],
+        expand => [ "spans" ],
+    ); #showing my Alliance bias in names, I know
+
+    if (defined ($heroism->{spans})) {
+        foreach (@{$heroism->{spans}}) {
+            my ($htmps,$htmpe) = unpack "dd",$_;
+            if ($htmpe-$htmps > 45) {print "Detected a heroism/bloodlust lasting longer than 45s. This should not be happening. If you can submit a bug to http://code.google.com/p/apostasis ideally with logs attached, it'd be much appreciated!\n";}
+            $htmps*=1000; $htmpe*=1000;
+            push @herostart, $htmps; push @heroend, $htmpe;
+        }
+    }
+
     ######################
     # DAMAGE AND HEALING #
     ######################
@@ -653,6 +674,16 @@ sub page {
         $healString =~ s/,$/]/; #closes the array
         $dinString =~ s/,$/]/; #closes the array
         
+        my $herostring = "";
+        #Prepare heroism additional strings
+        if (defined($herostart[0])) {
+            $herostring = ", markings: [ \n";
+            for (my $i=0; $i<$#herostart; $i++) {
+                $herostring .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n"; 
+            }
+            $herostring .= " ] ";
+        }
+        
         #Prepare the page
         my @plotHeader = ( "Damage out (red), Healing (blue), Damage in (black)");
         
@@ -681,7 +712,7 @@ sub page {
         yaxis: { ticks: 10 },
         selection: { mode: "x" },
         crosshair: {mode: "x" },
-        grid: { hoverable: true, autoHighlight: false }
+        grid: { hoverable: true, autoHighlight: false $herostring}
     };
     
     var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = -------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = -------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = -------"} ], options);
@@ -738,7 +769,7 @@ sub page {
         },
         xaxis: { ticks: 6, mode: "time" },
         yaxis: { ticks: 2 },
-        grid: { color: "#999" },
+        grid: { color: "#999" $herostring},
         selection: { mode: "x" }
     });
     
