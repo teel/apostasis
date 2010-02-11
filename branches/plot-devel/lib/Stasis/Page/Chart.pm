@@ -674,16 +674,71 @@ sub page {
         $healString =~ s/,$/]/; #closes the array
         $dinString =~ s/,$/]/; #closes the array
         
-        my $herostring = "";
         #Prepare heroism additional strings
+        my $markString = "";
+        if (defined($herostart[0]) or scalar @deathlist) {
+            #we need to show heroism/bloodlust and/or deaths
+            $markString = ", markings: [ \n";
+        }
+
         if (defined($herostart[0])) {
-            $herostring = ", markings: [ \n";
             for (my $i=0; $i<$#herostart; $i++) {
-                $herostring .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n"; 
+                $markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n"; 
             }
-            $herostring .= " ] ";
         }
         
+        #Prepare death data
+        my @deathTimes; my @deathLinks;
+        #including code for tooltip
+        my $deathToolTip = <<ENDTOOLTIP;
+    var toolTipPrev = null;
+    function showTooltip(x, y, contents) {
+        \$('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80,
+            'font-size': 'small'
+        }).appendTo("body").fadeIn(200);
+    }
+ENDTOOLTIP
+       #this will hold extra data to for the death tooltip
+       my $deathLegendAddition;        
+        if ( scalar @deathlist ) {
+            $deathToolTip .= "    var deathData = [";
+            foreach my $death (@deathlist) {
+                my $t = $death->{t} * 1000;
+                my $link = "Death: " . $pm->{index}->actorname($death->{actor});
+                $markString .= "{ xaxis: { from: $t, to : $t }, color: \"#ffc5c5\" },\n";
+                push @deathTimes, $t; push @deathLinks, $link;
+                $deathToolTip .= "[$t,'$link'],";
+            }
+            $deathToolTip =~ s/,$/];\n/;
+            $deathLegendAddition .= 
+            "        for (j=0; j<deathData.length-1; ++j)\n".
+            "            if (deathData[j][0] > pos.x)\n".
+            "                break;\n".
+            #find nearest of the two points
+            "        if (j != 0 && Math.abs(deathData[j][0] - pos.x) > Math.abs(deathData[j-1][0] - pos.x)) --j;\n".
+            #restrict tooltip firing to only if you're within 5 seconds of the death, and if we're not already showing it
+            #it'd be nicer to scale this by zoom in the future
+            "        if ((Math.abs(deathData[j][0] - pos.x) < 5000) && (toolTipPrev != j)) {\n".
+            "            toolTipPrev = j;\n".
+            "            \$(\"#tooltip\").remove();\n".
+            "            showTooltip(pos.pageX, pos.pageY, deathData[j][1]);\n".
+            "        } else { \$(\"#tooltip\").remove(); toolTipPrev = null;}\n";
+            
+        }
+
+        if (defined($herostart[0]) or scalar @deathlist) {
+            $markString .= " ] ";
+        }
+
+
         #Prepare the page
         my @plotHeader = ( "Damage out (red), Healing (blue), Damage in (black)");
         
@@ -703,6 +758,7 @@ sub page {
     var dps = $dpsString;
     var heal = $healString;
     var din = $dinString;
+
     var options = {
         series: {
             lines: { show: true },
@@ -712,10 +768,10 @@ sub page {
         yaxis: { ticks: 10 },
         selection: { mode: "x" },
         crosshair: {mode: "x" },
-        grid: { hoverable: true, autoHighlight: false $herostring}
+        grid: { hoverable: true, autoHighlight: false $markString}
     };
     
-    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = -------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = -------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = -------"} ], options);
+    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = --------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = --------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = --------"} ], options);
     var legends = \$("#mainplot .legendLabel");
     legends.each(function () {
         // fix the widths so they don't jump around
@@ -724,7 +780,9 @@ sub page {
 
     var updateLegendTimeout = null;
     var latestPosition = null;
-    
+
+$deathToolTip
+
     function updateLegend() {
         updateLegendTimeout = null;
         
@@ -759,6 +817,7 @@ sub page {
         latestPosition = pos;
         if (!updateLegendTimeout)
             updateLegendTimeout = setTimeout(updateLegend, 50);
+$deathLegendAddition
     });
 
     var miniplot = \$.plot(\$("#miniplot"), [ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ], {
@@ -769,7 +828,7 @@ sub page {
         },
         xaxis: { ticks: 6, mode: "time" },
         yaxis: { ticks: 2 },
-        grid: { color: "#999" $herostring},
+        grid: { color: "#999" $markString},
         selection: { mode: "x" }
     });
     
