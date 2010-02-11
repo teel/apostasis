@@ -683,7 +683,9 @@ sub page {
 
         if (defined($herostart[0])) {
             for (my $i=0; $i<$#herostart; $i++) {
-                $markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n"; 
+                #need to figure out why sometimes the heroism ending isn't picked up
+                #we can probably cope without though as long as enough people get it parsed correctly
+                unless ($herostart[$i] == 0 or $heroend[$i] == 0) {$markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n";} 
             }
         }
         
