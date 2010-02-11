@@ -94,6 +94,10 @@ sub page {
     my $raidDamage = 0;
     
     my @raiders = map { $self->{raid}{$_}{class} ? ( $_ ) : () } keys %{$self->{raid}};
+    my @raidersNoPets;
+    foreach (@raiders) {
+        unless ($self->{raid}{$_}{class} eq 'Pet') {push @raidersNoPets,$_;}
+    }
     
     ####################
     # ACTIVITY and DPS #
@@ -114,6 +118,7 @@ sub page {
     my (@herostart,@heroend);
     my $heroism = $self->{ext}{Aura}->sum(
         actor => \@raiders,
+        target => \@raidersNoPets,
         spell => [32182,2825],
         expand => [ "spans" ],
     ); #showing my Alliance bias in names, I know
@@ -134,7 +139,7 @@ sub page {
     # Damage to mobs by raiders and their pets
     my $deOut = $self->{ext}{Damage}->sum( 
         actor => \@raiders, 
-        -target => \@raiders, 
+        -target => \@raiders,
         expand => [ "actor" ], 
         fields => [ qw/hitTotal critTotal tickTotal damageAtTime/ ]
     );
