@@ -707,7 +707,7 @@ sub page {
     }
 ENDTOOLTIP
        #this will hold extra data to for the death tooltip
-       my $deathLegendAddition;        
+       my $deathLegendAddition="";        
         if ( scalar @deathlist ) {
             $deathToolTip .= "    var deathData = [";
             foreach my $death (@deathlist) {
