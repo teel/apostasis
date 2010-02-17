@@ -22,11 +22,11 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package Stasis::Page;
-
 use strict;
 use warnings;
 use POSIX;
 use HTML::Entities;
+use Time::Local;
 use Stasis::PageMaker;
 use Stasis::ActorGroup;
 
@@ -231,6 +231,15 @@ sub _json {
     } else {
         '""'
     }
+}
+
+sub timeZoneOffset {
+    #Provides a timezone offset in seconds
+    #takes as argument an event timestamp
+    #Some pages will need this to convert timestamps for use in JavaScript
+    my @t = localtime($_[1]);
+    return timegm(@t)-timelocal(@t);
+    
 }
 
 1;

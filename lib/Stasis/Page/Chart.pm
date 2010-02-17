@@ -617,13 +617,16 @@ sub page {
     #####################
     # FLOT PLOTS        #
     #####################
-    if ($self->{plot}) { 
+    if ($self->{plot}) {         
         #Prepare the data
         my @dpstimestamps=keys %$damageAtTimeAcc;
         my @healingtimestamps=keys %$healingAtTimeAcc;
         my @dintimestamps=keys %$dinAtTimeAcc;
         my @timestamps=sort (@dpstimestamps,@healingtimestamps,@dintimestamps);
         my $mintime=$timestamps[0]; my $maxtime=$timestamps[-1];
+        
+        #Find the timezone for the plot
+        my $tZOffset = $self->timeZoneOffset($mintime);
         
         #First check if we need to smooth at all
         my $smooth;
@@ -636,7 +639,7 @@ sub page {
             if (exists $damageAtTimeAcc->{$i}) {$damageAtTimeArr[$i-$mintime] = $damageAtTimeAcc->{$i}} else {$damageAtTimeArr[$i-$mintime] = 0}
             if (exists $healingAtTimeAcc->{$i}) {$healingAtTimeArr[$i-$mintime] = $healingAtTimeAcc->{$i}} else {$healingAtTimeArr[$i-$mintime] = 0}
             if (exists $dinAtTimeAcc->{$i}) {$dinAtTimeArr[$i-$mintime] = $dinAtTimeAcc->{$i}} else {$dinAtTimeArr[$i-$mintime] = 0}
-            $timeArr[$i-$mintime]=$i;
+            $timeArr[$i-$mintime]=$i-$tZOffset;
         }
         
         if ($smooth) {
@@ -690,7 +693,11 @@ sub page {
             for (my $i=0; $i<$#herostart; $i++) {
                 #need to figure out why sometimes the heroism ending isn't picked up
                 #we can probably cope without though as long as enough people get it parsed correctly
-                unless ($herostart[$i] == 0 or $heroend[$i] == 0) {$markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n";} 
+                unless ($herostart[$i] == 0 or $heroend[$i] == 0) {
+                    #fix for timezone then write out
+                    $herostart[$i] -= $tZOffset; $heroend[$i] -= $tZOffset;
+                    $markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n";
+                } 
             }
         }
         
@@ -718,7 +725,7 @@ ENDTOOLTIP
         if ( scalar @deathlist ) {
             $deathToolTip .= "    var deathData = [";
             foreach my $death (@deathlist) {
-                my $t = $death->{t} * 1000;
+                my $t = ($death->{t}-$tZOffset) * 1000;
                 my $link = "Death: " . $pm->{index}->actorname($death->{actor});
                 $markString .= "{ xaxis: { from: $t, to : $t }, color: \"#ffc5c5\" },\n";
                 push @deathTimes, $t; push @deathLinks, $link;
