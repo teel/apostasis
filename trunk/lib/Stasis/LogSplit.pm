@@ -1122,8 +1122,8 @@ our @fingerprints = (
 	mobEnd		=> [ 36855 ],
 	timeout		=> 30,
 	endAll      => 1,
-	heroic		=> [], # Frostbolt
-	normal		=> [72007], # Frostbolt
+	heroic		=> [ 72502, 72487, 72492 ], 
+	normal		=> [ 72007 ], # Frostbolt
 	
 },
 {
