@@ -695,7 +695,7 @@ sub page {
                 #we can probably cope without though as long as enough people get it parsed correctly
                 unless ($herostart[$i] == 0 or $heroend[$i] == 0) {
                     #fix for timezone then write out
-                    $herostart[$i] += $tZOffset; $heroend[$i] += $tZOffset;
+                    $herostart[$i] += $tZOffset*1000; $heroend[$i] += $tZOffset*1000;
                     $markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n";
                 } 
             }
