@@ -1122,8 +1122,8 @@ our @fingerprints = (
 	mobEnd		=> [ 36855 ],
 	timeout		=> 30,
 	endAll      => 1,
-	heroic		=> [], # Frostbolt
-	normal		=> [72007], # Frostbolt
+	heroic		=> [ 72502, 72487, 72492 ], 
+	normal		=> [ 72007 ], # Frostbolt
 	
 },
 {
@@ -1134,8 +1134,8 @@ our @fingerprints = (
 	mobContinue	=> [ 37215, 37540 ],
 	mobEnd		=> [ 37215, 37540 ],
 	timeout		=> 30,
-	heroic		=> [ ], 
-	normal		=> [ ], 
+	heroic		=> [ 72541, 69689 ], # Hurl Axe
+	normal		=> [ 72539, 69687 ], # Hurl Axe
 	
 },
 {
@@ -1146,8 +1146,8 @@ our @fingerprints = (
 	mobContinue	=> [ 37813, 38508 ],
 	mobEnd		=> [ 37813 ],
 	timeout		=> 30,
-	heroic		=> [ ], #Boiling Blood
-	normal		=> [ 72385, 72442], #Boiling Blood
+	heroic		=> [ 72443, 73058 ],
+	normal		=> [ 72385, 72442 ],
 	
 },
 {
