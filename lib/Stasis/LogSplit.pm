@@ -1172,8 +1172,8 @@ our @fingerprints = (
 	mobContinue	=> [ 36626 ],
 	mobEnd		=> [ 36626 ],
 	timeout		=> 30,
-	heroic		=> [ 72229, 72230 ], #Gastric Explosion
-	normal		=> [ 72227 ], #Gastric Explosion
+	heroic		=> [ 72553 ],
+	normal		=> [ 72551 ],
 },
 {
 	
@@ -1196,8 +1196,8 @@ our @fingerprints = (
     mobContinue     => [ 37970, 37972, 37973 ],
     mobEnd          => [ 37970, 37972, 37973 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 73039 ],
+    normal          => [ 73037 ],
     endAll      => 1,
 },
 {
@@ -1208,8 +1208,8 @@ our @fingerprints = (
     mobContinue     => [ 37955 ],
     mobEnd          => [ 37955 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 71626 ],
+    normal          => [ 72265 ],
 },
 {
     short           => "valithria",
