@@ -1184,7 +1184,7 @@ our @fingerprints = (
 	mobContinue	=> [ 36678, 37672, 37562 ],
 	mobEnd		=> [ 36678 ],
 	timeout		=> 30,
-	heroic		=> [ 72619, 72873 ],
+	heroic		=> [ 72619, 72873, 72855 ],
 	normal		=> [ 71278, 72295 ],
 	
 },
@@ -1233,8 +1233,8 @@ our @fingerprints = (
     mobContinue     => [ 36853 ],
     mobEnd          => [ 36853 ],
     timeout         => 30,
-    heroic          => [ 73063, 71058 ],
-    normal          => [ 73061, 73062 ],
+    heroic          => [ 71058, 71048, 71049 ],
+    normal          => [ 73061, 70123, 71047 ],
 
 },
 {
