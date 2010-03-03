@@ -1184,8 +1184,8 @@ our @fingerprints = (
 	mobContinue	=> [ 36678, 37672, 37562 ],
 	mobEnd		=> [ 36678 ],
 	timeout		=> 30,
-	heroic		=> [ 72619 ], #Choking Gas
-	normal		=> [ 71278 ], #Choking Gas
+	heroic		=> [ 72619, 72873 ],
+	normal		=> [ 71278, 72295 ],
 	
 },
 {
@@ -1216,11 +1216,11 @@ our @fingerprints = (
     zone            => "icecrown",
     long            => "Valithria Dreamwalker",
     mobStart        => [ 37868 ],
-    mobContinue     => [ 36789, 37868, 37863, 36791, 37886, 37934],
+    mobContinue     => [ 36789, 37868, 36791, 37863, 37886 ],
     mobEnd          => [ 36789 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 72026, 72018, 72025, 72017 ],
+    normal          => [ 71733 ],
 	endFriendly		=> 1,
 	endUltimate		=> 1,
 
@@ -1233,8 +1233,8 @@ our @fingerprints = (
     mobContinue     => [ 36853 ],
     mobEnd          => [ 36853 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 73063, 71058 ],
+    normal          => [ 73061, 73062 ],
 
 },
 {
