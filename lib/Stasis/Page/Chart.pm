@@ -854,7 +854,7 @@ $deathLegendAddition
         // do the zooming
         mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = -------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = -------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = -------"} ],
                       \$.extend(true, {}, options, {
-                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to },
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
                       }));
         // reset legends
         legends = \$("#mainplot .legendLabel");

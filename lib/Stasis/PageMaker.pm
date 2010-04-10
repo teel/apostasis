@@ -300,7 +300,7 @@ sub pageHeader {
 <link rel="stylesheet" type="text/css" href="../extras/sws2.css" />
 <script type="text/javascript" src="../extras/sws.js"></script>
 <!-- flot -->    
-<!--[if IE]><script language="javascript" type="text/javascript" src="../excanvas.min.js"></script><![endif]-->
+<!--[if IE]><script language="javascript" type="text/javascript" src="../extras/excanvas.min.js"></script><![endif]-->
 <script language="javascript" type="text/javascript" src="../extras/jquery.js"></script>
 <script language="javascript" type="text/javascript" src="../extras/jquery.flot.js"></script>
 <script language="javascript" type="text/javascript" src="../extras/jquery.flot.selection.js"></script>
