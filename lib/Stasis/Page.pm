@@ -22,11 +22,11 @@
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 package Stasis::Page;
-
 use strict;
 use warnings;
 use POSIX;
 use HTML::Entities;
+use Time::Local;
 use Stasis::PageMaker;
 use Stasis::ActorGroup;
 
@@ -43,12 +43,13 @@ sub new {
         name => $params{name} || "Untitled",
         server => $params{server} || "",
         region => $params{region} || "",
+        plot   => $params{plot} || "",
         dirname => $params{dirname} || "",
         short => $params{short} || "",
         heroic => $params{heroic},
     };
-    
-    $self->{pm} = $params{pm} || Stasis::PageMaker->new;
+   
+    $self->{pm} = $params{pm} || Stasis::PageMaker->new(plot => $self->{plot});
     $self->{pm}{$_} = $self->{$_} foreach qw/index raid ext grouper collapse/;
     
     bless $self, $class;
@@ -230,6 +231,15 @@ sub _json {
     } else {
         '""'
     }
+}
+
+sub timeZoneOffset {
+    #Provides a timezone offset in seconds
+    #takes as argument an event timestamp
+    #Some pages will need this to convert timestamps for use in JavaScript
+    my @t = localtime($_[1]);
+    return timegm(@t)-timelocal(@t);
+    
 }
 
 1;

@@ -115,21 +115,21 @@ B<-collapse>  For boss attempts and kills, collapse all mobs that have the
 
 B<-nav>       Add a cross-split navigation menu to each parse.
 
-B<-year>      Specify a year a parse took place in. If not included, the 
-           parser will use the current year.
-           
 B<-phpposturl>  At the end of the parse, output to STDOUT links in phpBB
            forum format a list of all bosses, trash and overall stats
-           in this parse. The URL fragment following this paramter will 
+           in this parse. The URL fragment following this paramter will
            be prepended to each output directly in the list.
 
 B<-cmdafterparse>  At the end of the parse, run the program specified
            after this option. Parameters to the command will be the 
            output directory, and each boss directory written to. This 
-           allows an external script to copy the generated files to an 
-           external web server
+           allows an external script to copy the generated files to 
+           an external web server
             Eg:       stasis -dir stats -cmdafterparse ./copy_files.pl
             Will Run: ./copyfiles stats <dir1> <dir2> ...
+
+B<-plot>      Enable plotting using flot (http://code.google.com/p/flot).
+           The flot libraries must be in your extras directory.
 
 =head1 BUGS
 
@@ -193,6 +193,7 @@ my $opt_locale;
 my $opt_fork;
 my $opt_phpposturl;
 my $opt_cmdafterparse;
+my $opt_plot;
 
 ## SUBS ##
 
@@ -329,6 +330,7 @@ my $rc = GetOptions(
     "fork"          => \$opt_fork,
     "phpposturl=s"  => \$opt_phpposturl,
     "cmdafterparse=s"  => \$opt_cmdafterparse,
+    "plot"          => \$opt_plot,
 );
 
 setlocale( LC_ALL, $opt_locale ) if $opt_locale;
@@ -462,7 +464,8 @@ if( $action eq "print" ) {
         region   => $opt_region,
         template => $opt_template,
         debug    => $opt_debug,
-        fork     => $opt_fork
+        fork     => $opt_fork,
+        plot     => $opt_plot
     );
     
     my $classer = Stasis::ClassGuess->new( debug => $opt_debug );
@@ -538,9 +541,9 @@ if( $action eq "print" ) {
                         index    => $index,
                     );
                     if ($opt_phpposturl) {
-			push @bosses, "[url=$opt_phpposturl/sws-".$boss->{short}.($boss->{heroic} ? "-heroic" : "")."-".floor($boss->{start})."/]".$boss->{long}."[/url]";
+			push @bosses, "[url=$opt_phpposturl/sws-".$boss->{short}."-".floor($boss->{start})."/]".$boss->{long}."[/url]";
 		    }
-		    push @dirs, "sws-".$boss->{short}.($boss->{heroic}?"-heroic":"")."-".floor($boss->{start});
+		    push @dirs, "sws-".$boss->{short}."-".floor($boss->{start});
 
                     # Find the directory name.
                     status sprintf "writing %s (%s) .. ", $boss->{long}, $writer->fill_template;
