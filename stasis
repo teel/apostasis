@@ -541,9 +541,9 @@ if( $action eq "print" ) {
                         index    => $index,
                     );
                     if ($opt_phpposturl) {
-			push @bosses, "[url=$opt_phpposturl/sws-".$boss->{short}."-".floor($boss->{start})."/]".$boss->{long}."[/url]";
+			push @bosses, "[url=$opt_phpposturl/sws-".$boss->{short}.($boss->{heroic} ? "-heroic" : "")."-".floor($boss->{start})."/]".$boss->{long}."[/url]";
 		    }
-		    push @dirs, "sws-".$boss->{short}."-".floor($boss->{start});
+		    push @dirs, "sws-".$boss->{short}.($boss->{heroic}?"-heroic":"")."-".floor($boss->{start});
 
                     # Find the directory name.
                     status sprintf "writing %s (%s) .. ", $boss->{long}, $writer->fill_template;
