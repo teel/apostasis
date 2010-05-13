@@ -1172,8 +1172,8 @@ our @fingerprints = (
 	mobContinue	=> [ 36626 ],
 	mobEnd		=> [ 36626 ],
 	timeout		=> 30,
-	heroic		=> [ 72229, 72230 ], #Gastric Explosion
-	normal		=> [ 72227 ], #Gastric Explosion
+	heroic		=> [ 72553, 72552 ],
+	normal		=> [ 72551 ],
 },
 {
 	
@@ -1184,8 +1184,8 @@ our @fingerprints = (
 	mobContinue	=> [ 36678, 37672, 37562 ],
 	mobEnd		=> [ 36678 ],
 	timeout		=> 30,
-	heroic		=> [ 72619 ], #Choking Gas
-	normal		=> [ 71278 ], #Choking Gas
+	heroic		=> [ 72855, 72856 ],
+	normal		=> [ 71278, 72295 ],
 	
 },
 {
@@ -1196,8 +1196,8 @@ our @fingerprints = (
     mobContinue     => [ 37970, 37972, 37973 ],
     mobEnd          => [ 37970, 37972, 37973 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 73039 ],
+    normal          => [ 73037 ],
     endAll      => 1,
 },
 {
@@ -1208,19 +1208,19 @@ our @fingerprints = (
     mobContinue     => [ 37955 ],
     mobEnd          => [ 37955 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 71626 ],
+    normal          => [ 72265 ],
 },
 {
     short           => "valithria",
     zone            => "icecrown",
     long            => "Valithria Dreamwalker",
     mobStart        => [ 37868 ],
-    mobContinue     => [ 36789, 37868, 37863, 36791, 37886, 37934],
+    mobContinue     => [ 36789, 37868, 36791, 37863, 37886 ],
     mobEnd          => [ 36789 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 72026, 72018, 72025, 72017 ],
+    normal          => [ 71733 ],
 	endFriendly		=> 1,
 	endUltimate		=> 1,
 
@@ -1233,8 +1233,8 @@ our @fingerprints = (
     mobContinue     => [ 36853 ],
     mobEnd          => [ 36853 ],
     timeout         => 30,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 71058, 71048, 71049 ],
+    normal          => [ 73061, 70123, 71047 ],
 
 },
 {
@@ -1245,8 +1245,8 @@ our @fingerprints = (
     mobContinue     => [ 36597, 37695, 37698, 36701, 36633, 37098, 37799, 38579, 38995 ],
     mobEnd          => [ 36597 ],
     timeout         => 240,
-    heroic          => [ ],
-    normal          => [ ],
+    heroic          => [ 73780, 73781 ],
+    normal          => [ 70541 ],
 
 },
 

@@ -99,6 +99,9 @@ B<-attempt>  Include a parse for boss attempts (not just kills).
 B<-trash>     Include a parse for trash mobs (all sections of the log that
            were not part of a boss encounter).
 
+B<-bosses>   Include a parse for boss attempts and kills only (everything
+             but trash).
+
 B<-combine>   Include a parse that rolls up all attempts and kills on each
            particular boss (one extra parse per boss).
 
@@ -177,6 +180,7 @@ my $opt_year;
 my $opt_trash;
 my $opt_overall;
 my $opt_combine;
+my $opt_bosses;
 my $opt_region;
 my $opt_server;
 my $opt_collapse;
@@ -313,6 +317,7 @@ my $rc = GetOptions(
     "trash"         => \$opt_trash,
     "overall"       => \$opt_overall,
     "combine"       => \$opt_combine,
+    "bosses"        => \$opt_bosses,
     "server=s"      => \$opt_server,
     "region=s"      => \$opt_region,
     "collapse"      => \$opt_collapse,
@@ -442,9 +447,10 @@ if( $action eq "print" ) {
     # Assign classes to %raid and splits to @splits
     my %boss_tries;
     
-    # Extension holders for normal splits, "-trash", "-overall", and "-combine".
+    # Extension holders for normal splits, "-trash", "-overall", "-bosses" and "-combine".
     my $split_exts = makeext;
     my $trash_exts = makeext;
+    my $bosses_exts = makeext;
     my $overall_exts = makeext;
     my %combine_exts; # indexed by boss short name
     
@@ -482,6 +488,9 @@ if( $action eq "print" ) {
                     }
                 }
                 
+                # Resume bosses.
+                $bosses_exts->resume($ed) if $opt_bosses;
+                
                 # Suspend trash.
                 $trash_exts->suspend($ed) if $opt_trash;
                 
@@ -506,6 +515,9 @@ if( $action eq "print" ) {
                 
                 # Suspend the combined extensions.
                 $combine_exts{ $boss->{short} }->suspend($ed) if $opt_combine;
+                
+                # Suspend bosses.
+                $bosses_exts->suspend($ed) if $opt_bosses;
                 
                 # Resume trash.
                 $trash_exts->resume($ed) if $opt_trash;
@@ -559,6 +571,10 @@ if( $action eq "print" ) {
     # Start overall and trash if requested.
     $overall_exts->start($ed) if $opt_overall;
     $trash_exts->start($ed) if $opt_trash;
+    if ($opt_bosses) {
+	$bosses_exts->start($ed);
+	$bosses_exts->suspend($ed);  # Suspend until we start a boss
+    }
     
     # Keep track of when the log started.
     my $first = 0;
@@ -594,6 +610,7 @@ if( $action eq "print" ) {
     }
     
     $trash_exts->finish($ed) if $opt_trash;
+    $bosses_exts->finish($ed) if $opt_bosses;
     $overall_exts->finish($ed) if $opt_overall;
     
     my %raid = $classer->finish;
@@ -626,6 +643,26 @@ if( $action eq "print" ) {
 
         eval {
             $writer->set( boss => $boss, raid => \%raid, exts => $trash_exts, index => $index, collapse => 1 );
+            
+            status sprintf "Writing %s (%s) .. ", $boss->{long}, $writer->fill_template;
+            $writer->write_dir;
+            status "done.";
+        }; if( $@ ) {
+            bomb $@;
+        }
+    }
+    
+    # Write bosses-only
+    if( $opt_bosses && !$opt_nowrite ) {
+	if ($opt_phpposturl) {
+	    push @bosses, "[url=$opt_phpposturl/sws-bosses-".floor($first)."/]Bosses Only[/url] ";
+	}
+	push @dirs, "sws-bosses-".floor($first);
+        
+        my $boss = { short => "bosses", long => "Bosses Only", start => $first, kill => 0 };
+
+        eval {
+            $writer->set( boss => $boss, raid => \%raid, exts => $bosses_exts, index => $index, collapse => 1 );
             
             status sprintf "Writing %s (%s) .. ", $boss->{long}, $writer->fill_template;
             $writer->write_dir;
