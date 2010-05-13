@@ -47,7 +47,7 @@ sub key {
 }
 
 sub value {
-    qw/count hitCount hitTotal hitMin hitMax critCount critTotal critMin critMax tickCount tickTotal tickMin tickMax tickCritCount partialResistCount partialBlockCount partialAbsorbCount partialResistTotal partialBlockTotal partialAbsorbTotal crushing glancing dodgeCount absorbCount resistCount parryCount missCount blockCount reflectCount deflectCount immuneCount/;
+    qw/count hitCount hitTotal hitMin hitMax critCount critTotal critMin critMax tickCount tickTotal tickMin tickMax tickCritCount partialResistCount partialBlockCount partialAbsorbCount partialResistTotal partialBlockTotal partialAbsorbTotal crushing glancing dodgeCount absorbCount resistCount parryCount missCount blockCount reflectCount deflectCount immuneCount damageAtTime/;
 }
 
 sub process {
@@ -102,6 +102,7 @@ sub process {
         # Add the damage to the total for this type of hit (hit/crit/tick).
         $ddata->{"${type}Count"} += 1;
         $ddata->{"${type}Total"} += $event->{amount};
+        $ddata->{"damageAtTime"}{$event->timeInSeconds()} += $event->{amount};
         
         # Update min/max hit size.
         $ddata->{"${type}Min"} = $event->{amount}

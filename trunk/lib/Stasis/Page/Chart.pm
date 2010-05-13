@@ -36,6 +36,29 @@ use Stasis::Extension qw/span_sum/;
 
 our @ISA = "Stasis::Page";
 
+sub array_smooth {
+    #smooth an array using a moving average, $smooth parameter is how many above and below central value
+    #so for example $smooth=1 is a window of width 3
+    my ($aref,$smooth) = @_;
+    my @array=@$aref;
+    my @output;
+    my @temp;
+    my $low; my $high; my $length;
+    
+    for (my $i=0; $i<$#array; $i++) {
+        $length=0;
+        my $low = $i-$smooth < 0 ? 0 : $i-$smooth;
+        my $high = $i+$smooth > $#array-1 ? $#array-1 : $i+$smooth;
+        foreach (@array[$low .. $high]) {$temp[$i] += $_ ; $length++;}
+        $temp[$i] /= $length;
+    }
+    
+    for (my $i=0; $i<$#temp; $i+=$smooth) {
+        push @output, $temp[$i];
+    }
+    return \@output;
+}
+
 sub page {
     my $self = shift;
     
@@ -71,6 +94,10 @@ sub page {
     my $raidDamage = 0;
     
     my @raiders = map { $self->{raid}{$_}{class} ? ( $_ ) : () } keys %{$self->{raid}};
+    my @raidersNoPets;
+    foreach (@raiders) {
+        unless ($self->{raid}{$_}{class} eq 'Pet') {push @raidersNoPets,$_;}
+    }
     
     ####################
     # ACTIVITY and DPS #
@@ -83,6 +110,28 @@ sub page {
         expand => [ "actor" ],
     );
     
+    #############################
+    # AURAS - HEROISM/BLOODLUST #
+    #############################
+    
+    #used in plots
+    my (@herostart,@heroend);
+    my $heroism = $self->{ext}{Aura}->sum(
+        actor => \@raiders,
+        target => \@raidersNoPets,
+        spell => [32182,2825],
+        expand => [ "spans" ],
+    ); #showing my Alliance bias in names, I know
+
+    if (defined ($heroism->{spans})) {
+        foreach (@{$heroism->{spans}}) {
+            my ($htmps,$htmpe) = unpack "dd",$_;
+            if ($htmpe-$htmps > 45) {$htmpe=$htmps+45;}
+            $htmps*=1000; $htmpe*=1000;
+            push @herostart, $htmps; push @heroend, $htmpe;
+        }
+    }
+
     ######################
     # DAMAGE AND HEALING #
     ######################
@@ -90,13 +139,15 @@ sub page {
     # Damage to mobs by raiders and their pets
     my $deOut = $self->{ext}{Damage}->sum( 
         actor => \@raiders, 
-        -target => \@raiders, 
+        -target => \@raiders,
         expand => [ "actor" ], 
-        fields => [ qw/hitTotal critTotal tickTotal/ ]
+        fields => [ qw/hitTotal critTotal tickTotal damageAtTime/ ]
     );
-    
+
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$deOut );
-    
+
+    my $damageAtTimeAcc; #ref to accumulated data
+
     while( my ($kactor, $ractor) = each %{$self->{raid}} ) {
         # Only show raiders
         next unless $ractor->{class} && $self->{ext}{Presence}->presence($kactor);
@@ -107,37 +158,42 @@ sub page {
         
         $raiderDamage{$raider} += $deOut->{$kactor}{total} || 0 if $deOut->{$kactor};
         push @{$raiderSpans{$raider}}, @{$actOut->{$kactor}{spans}} if $actOut->{$kactor} && $actOut->{$kactor}{spans};
+        if ($self->{plot}) { foreach (keys %{$deOut->{$kactor}{damageAtTime}}) { $damageAtTimeAcc->{$_} += ${$deOut->{$kactor}{damageAtTime}}{$_};} }
     }
-    
     foreach (values %raiderDamage) {
         $raidDamage += $_;
     }
     
+
+
     # Calculate incoming damage
     my $raidInDamage = 0;
     my $deInAll = $self->{ext}{Damage}->sum( 
         target => \@raiders, 
         expand => [ "target" ], 
-        fields => [ qw/hitTotal critTotal tickTotal/ ]
+        fields => [ qw/hitTotal critTotal tickTotal damageAtTime/ ]
     );
     
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$deInAll );
-    
+
+    my $dinAtTimeAcc; #ref to accumulated data
+
     while( my ($kactor, $ractor) = each %{$self->{raid}} ) {
         # Only show raiders
         next if !$ractor->{class} || $ractor->{class} eq "Pet" || !$self->{ext}{Presence}->presence($kactor);
         
         $raiderIncoming{$kactor} += $deInAll->{$kactor}{total} || 0 if $deInAll->{$kactor};
         $raidInDamage += $deInAll->{$kactor}{total} || 0 if $deInAll->{$kactor};
+        if ($self->{plot}) { foreach (keys %{$deInAll->{$kactor}{damageAtTime}}) { $dinAtTimeAcc->{$_} += ${$deInAll->{$kactor}{damageAtTime}}{$_};} }
     }
 
-	# Calculate death count
-	my %deathCount;
+    # Calculate death count
+    my %deathCount;
     foreach my $deathevent (keys %{$self->{ext}{Death}{actors}}) {
         if ($self->{raid}{$deathevent} && 
             $self->{raid}{$deathevent}{class} &&
             $self->{raid}{$deathevent}{class} ne "Pet") {
-				$deathCount{$deathevent} = @{$self->{ext}{Death}{actors}{$deathevent}};
+                $deathCount{$deathevent} = @{$self->{ext}{Death}{actors}{$deathevent}};
         }
     }
     
@@ -153,11 +209,13 @@ sub page {
         actor => \@raiders, 
         #target => \@raiders, 
         expand => [ "actor" ], 
-        fields => [ qw/hitEffective critEffective tickEffective hitTotal critTotal tickTotal/ ]
+        fields => [ qw/hitEffective critEffective tickEffective hitTotal critTotal tickTotal healingAtTime/ ]
     );
     
     $_->{total} = $self->_addHCT( $_, "Total" ) foreach ( values %$heOutFriendly );
     $_->{effective} = $self->_addHCT( $_, "Effective" ) foreach ( values %$heOutFriendly );
+
+    my $healingAtTimeAcc; #ref to accumulated data
     
     while( my ($kactor, $ractor) = each (%{$self->{raid}}) ) {
         # Only show raiders
@@ -170,10 +228,11 @@ sub page {
         $raiderHealing{$raider} += $heOutFriendly->{$kactor}{effective} || 0 if $heOutFriendly->{$kactor};
         $raiderHealingTotal{$raider} += $heOutFriendly->{$kactor}{total} || 0 if $heOutFriendly->{$kactor};
         
-		
+        
         $raidHealing += $heOutFriendly->{$kactor}{effective} || 0;
         $raidHealingTotal += $heOutFriendly->{$kactor}{total} || 0;
-		
+        if ($self->{plot}) { foreach (keys %{$heOutFriendly->{$kactor}{healingAtTime}}) { $healingAtTimeAcc->{$_} += ${$heOutFriendly->{$kactor}{healingAtTime}}{$_};} }
+        
     }
     
     ############
@@ -214,7 +273,8 @@ sub page {
 
     @deathlist = sort { $a->{'t'} <=> $b->{'t'} } @deathlist;
     
-    my @tabs = ( "Damage Out", "DPS Out", "Damage In", "Healing", "Raid & Mobs", "Deaths" );
+    my @tabs = ( "Damage Out", "DPS Out", "Damage In", "Healing", "Raid & Mobs", "Deaths"); 
+    if ($self->{plot}) {push @tabs, "Plot";}
     $PAGE .= "<br />" . $pm->tabBar(@tabs);
     
     ################
@@ -232,62 +292,75 @@ sub page {
             " ",
         );
 
-    # Damage Out, then DPS
-    my @damagesort;
-    my ($DAMTYPE_OUT, $DAMTYPE_DPS) = (1,2);
+   # Damage Out, then DPS
+
+   my @damagesort;
+
+   my ($DAMTYPE_OUT, $DAMTYPE_DPS) = (1,2);
     foreach my $damtype ($DAMTYPE_OUT, $DAMTYPE_DPS) {
-
-	$PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
-	$PAGE .= $pm->tableStart();
-	$PAGE .= $pm->tableHeader((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"), @damageHeader);
+        $PAGE .= $pm->tabStart((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"));
+   
+    $PAGE .= $pm->tableStart();
+   
+    $PAGE .= $pm->tableHeader((($damtype == $DAMTYPE_OUT)?"Damage Out":"DPS Out"), @damageHeader);
+   
+    if ($damtype == $DAMTYPE_OUT) {
+   
+        @damagesort = sort {
+       
+        $raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
+            } keys %raiderDamage;
+   
+    } else {
+   
+        @damagesort = sort {
+       
+        $raiderDPS{$b} <=> $raiderDPS{$a} || $a cmp $b
+   
+        } keys %raiderDPS;
+   
+    }
     
-	if ($damtype == $DAMTYPE_OUT) {
-	    @damagesort = sort {
-		$raiderDamage{$b} <=> $raiderDamage{$a} || $a cmp $b
-		} keys %raiderDamage;
-	} else {
-	    @damagesort = sort {
-		$raiderDPS{$b} <=> $raiderDPS{$a} || $a cmp $b
-		} keys %raiderDPS;
-	}
+    my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
+    my $mostdps = keys %raiderDPS && $raiderDPS{ $damagesort[0] };
+    foreach my $actor (@damagesort) {
     
-	my $mostdmg = keys %raiderDamage && $raiderDamage{ $damagesort[0] };
-	my $mostdps = keys %raiderDPS && $raiderDPS{ $damagesort[0] };
-	
-	foreach my $actor (@damagesort) {
-	    my $ptime = $self->{ext}{Presence}->presence($actor);
-
-	    my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
-	    $raiderDPS{$actor} = $raiderDamage{$actor} && $dpsTime && ($raiderDamage{$actor} / $dpsTime);
+   my $ptime = $self->{ext}{Presence}->presence($actor);
+        my $dpsTime = exists $raiderSpans{$actor} && span_sum( $raiderSpans{$actor} );
+        $raiderDPS{$actor} = $raiderDamage{$actor} && $dpsTime && ($raiderDamage{$actor} / $dpsTime);
+        my ($perc, $chart);
+        if ($damtype == $DAMTYPE_OUT) {
         
-	    my ($perc, $chart);
-	    if ($damtype == $DAMTYPE_OUT) {
-		$perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
-		$chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
+   $perc = $raiderDamage{$actor} && $raidDamage && sprintf( "%d%%", ceil($raiderDamage{$actor} / $raidDamage * 100));
+            $chart = $mostdmg && sprintf( "%d", ceil($raiderDamage{$actor} / $mostdmg * 100) );
+        } else {
+            $perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
+            $chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
+        }
 
-	    } else {
-		$perc = $raiderDPS{$actor} && $raidDPS && ceil($raiderDPS{$actor} / $raidDPS * 100);
-		$chart = $mostdps && sprintf( "%d", ceil($raiderDPS{$actor} / $mostdps * 100) );
-	    }
-
-	    $PAGE .= $pm->tableRow( 
-				    header => \@damageHeader,
-				    data => {
-					"Player" => $pm->actorLink( $actor ),
-					"R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
-					"R-%" => $perc,
-					"R-Dam. Out" => $raiderDamage{$actor},
-					" " => $chart,
-					"R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
-					"R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
-					"R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
-				    },
-				    type => "",
-				    );
-	}
+        
+        $PAGE .= $pm->tableRow(
+            header => \@damageHeader,
+            data => {
+            
+   "Player" => $pm->actorLink( $actor ),
+                "R-Presence" => sprintf( "%02d:%02d", $ptime/60, $ptime%60 ),
+                "R-%" => $perc,
+                "R-Dam. Out" => $raiderDamage{$actor},
+                " " => $chart,
+                "R-Pres. DPS" => $raiderDamage{$actor} && $dpsTime && $ptime && sprintf( "%d", $raiderDamage{$actor} / $ptime ),
+                "R-Act. DPS" => $raiderDamage{$actor} && $dpsTime && sprintf( "%d", $raiderDamage{$actor} / $dpsTime ),
+                "R-Activity" => $dpsTime && $ptime && sprintf( "%0.1f%%", $dpsTime / $ptime * 100 ),
+            },
+            type => "",
+            );
     
-	$PAGE .= $pm->tableEnd;
-	$PAGE .= $pm->tabEnd;
+        }
+    
+        $PAGE .= $pm->tableEnd;
+    
+        $PAGE .= $pm->tabEnd;
+    
     }
 
     #########################
@@ -540,12 +613,276 @@ sub page {
     
     $PAGE .= $pm->tableEnd;
     $PAGE .= $pm->tabEnd;
+
+    #####################
+    # FLOT PLOTS        #
+    #####################
+    if ($self->{plot}) {         
+        #Prepare the data
+        my @dpstimestamps=keys %$damageAtTimeAcc;
+        my @healingtimestamps=keys %$healingAtTimeAcc;
+        my @dintimestamps=keys %$dinAtTimeAcc;
+        my @timestamps=sort (@dpstimestamps,@healingtimestamps,@dintimestamps);
+        my $mintime=$timestamps[0]; my $maxtime=$timestamps[-1];
+        
+        #Find the timezone for the plot
+        my $tZOffset = $self->timeZoneOffset($mintime);
+        
+        #First check if we need to smooth at all
+        my $smooth;
+        my $maxNtimestamps = 1200; #20 minutes
+        if ($maxtime-$mintime > $maxNtimestamps) { $smooth = int (0.5+($maxtime-$mintime)/(2*$maxNtimestamps));} else {$smooth = 0}
+        
+        #Arrange in arrays and smooth if needed
+        my @damageAtTimeArr; my @healingAtTimeArr; my @dinAtTimeArr; my @timeArr;
+        for (my $i=$mintime; $i<=$maxtime; $i++) {
+            if (exists $damageAtTimeAcc->{$i}) {$damageAtTimeArr[$i-$mintime] = $damageAtTimeAcc->{$i}} else {$damageAtTimeArr[$i-$mintime] = 0}
+            if (exists $healingAtTimeAcc->{$i}) {$healingAtTimeArr[$i-$mintime] = $healingAtTimeAcc->{$i}} else {$healingAtTimeArr[$i-$mintime] = 0}
+            if (exists $dinAtTimeAcc->{$i}) {$dinAtTimeArr[$i-$mintime] = $dinAtTimeAcc->{$i}} else {$dinAtTimeArr[$i-$mintime] = 0}
+            $timeArr[$i-$mintime]=$i+$tZOffset;
+        }
+        
+        if ($smooth) {
+            @damageAtTimeArr=@{array_smooth(\@damageAtTimeArr,$smooth)};
+            @healingAtTimeArr=@{array_smooth(\@healingAtTimeArr,$smooth)};
+            @dinAtTimeArr=@{array_smooth(\@dinAtTimeArr,$smooth)};
+            @timeArr=@{array_smooth(\@timeArr,$smooth)};
+        }
+        
+        #Now write the strings out
+        
+        my $dpsString="[";
+        my $healString="[";
+        my $dinString="[";
+        #These three hold the last value we used so we can skip repeat zero values to keep page sizes down in long parses
+        #The time ones are used to make sure we don't repeat a write when we have to write out the entry before
+        my $lastDout=0; my $lastDoutTime=0;
+        my $lastHeal=0; my $lastHealTime=0;
+        my $lastDin=0; my $lastDinTime=0;
+        
+        for (my $i=0; $i<$#timeArr; $i++) {
+            if ($damageAtTimeArr[$i]) {
+                    if ($i-1 >=0 && (!$lastDout && $i-1 != $lastDoutTime)) { $dpsString.="[". $timeArr[$i-1]*1000 .",0],"; }
+                    $dpsString.="[".$timeArr[$i]*1000 .",".$damageAtTimeArr[$i]."],";
+                    $lastDout = $damageAtTimeArr[$i]; $lastDoutTime=$i;
+            } elsif ($lastDout) { $dpsString.="[". $timeArr[$i]*1000 .",0],"; $lastDout=0; $lastDoutTime=$i;}
+            if ($healingAtTimeArr[$i]) {
+                if ($i-1 >= 0 && (!$lastHeal && $i-1 != $lastHealTime)) { $healString.="[". $timeArr[$i-1]*1000 .",0],"; }
+                $healString.="[".$timeArr[$i]*1000 .",".$healingAtTimeArr[$i]."],"; 
+                $lastHeal=$healingAtTimeArr[$i]; $lastHealTime=$i;
+            } elsif ($lastHeal) { $healString.="[". $timeArr[$i]*1000 .",0],"; $lastHeal=0; $lastHealTime=$i;}
+            if (exists $dinAtTimeArr[$i]) {
+                if ($i-1 >= 0 && (!$lastDin && $i-1 != $lastDinTime)) { $dinString.="[". $timeArr[$i-1]*1000 .",0],"; }
+                $dinString.="[".$timeArr[$i]*1000 .",".$dinAtTimeArr[$i]."],";
+                $lastDin = $dinAtTimeArr[$i]; $lastDinTime=$i;
+            } elsif ($lastDin) { $dinString.="[". $timeArr[$i]*1000 .",0],"; $lastDin=0; $lastDinTime=$i;}
+        } 
+       
+        $dpsString =~ s/,$/]/; #closes the array
+        $healString =~ s/,$/]/; #closes the array
+        $dinString =~ s/,$/]/; #closes the array
+        
+        #Prepare heroism additional strings
+        my $markString = "";
+        if (defined($herostart[0]) or scalar @deathlist) {
+            #we need to show heroism/bloodlust and/or deaths
+            $markString = ", markings: [ \n";
+        }
+
+        if (defined($herostart[0])) {
+            for (my $i=0; $i<$#herostart; $i++) {
+                #need to figure out why sometimes the heroism ending isn't picked up
+                #we can probably cope without though as long as enough people get it parsed correctly
+                unless ($herostart[$i] == 0 or $heroend[$i] == 0) {
+                    #fix for timezone then write out
+                    $herostart[$i] += $tZOffset*1000; $heroend[$i] += $tZOffset*1000;
+                    $markString .= "{ xaxis: { from: $herostart[$i], to: $heroend[$i] }, color: \"#e5e5ff\" },\n";
+                } 
+            }
+        }
+        
+        #Prepare death data
+        my @deathTimes; my @deathLinks;
+        #including code for tooltip
+        my $deathToolTip = <<ENDTOOLTIP;
+    var toolTipPrev = null;
+    function showTooltip(x, y, contents) {
+        \$('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #fdd',
+            padding: '2px',
+            'background-color': '#fee',
+            opacity: 0.80,
+            'font-size': 'small'
+        }).appendTo("body").fadeIn(200);
+    }
+ENDTOOLTIP
+       #this will hold extra data to for the death tooltip
+       my $deathLegendAddition="";        
+        if ( scalar @deathlist ) {
+            $deathToolTip .= "    var deathData = [";
+            foreach my $death (@deathlist) {
+                my $t = ($death->{t}+$tZOffset) * 1000;
+                my $link = "Death: " . $pm->{index}->actorname($death->{actor});
+                $markString .= "{ xaxis: { from: $t, to : $t }, color: \"#ffc5c5\" },\n";
+                push @deathTimes, $t; push @deathLinks, $link;
+                $deathToolTip .= "[$t,'$link'],";
+            }
+            $deathToolTip =~ s/,$/];\n/;
+            $deathLegendAddition .= 
+            "        for (j=0; j<deathData.length-1; ++j)\n".
+            "            if (deathData[j][0] > pos.x)\n".
+            "                break;\n".
+            #find nearest of the two points
+            "        if (j != 0 && Math.abs(deathData[j][0] - pos.x) > Math.abs(deathData[j-1][0] - pos.x)) --j;\n".
+            #restrict tooltip firing to only if you're within 5 seconds of the death, and if we're not already showing it
+            #it'd be nicer to scale this by zoom in the future
+            "        if ((Math.abs(deathData[j][0] - pos.x) < 5000) && (toolTipPrev != j)) {\n".
+            "            toolTipPrev = j;\n".
+            "            \$(\"#tooltip\").remove();\n".
+            "            showTooltip(pos.pageX, pos.pageY, deathData[j][1]);\n".
+            "        } else { \$(\"#tooltip\").remove(); toolTipPrev = null;}\n";
+            
+        }
+
+        if (defined($herostart[0]) or scalar @deathlist) {
+            $markString .= " ] ";
+        }
+
+
+        #Prepare the page
+        my @plotHeader = ( "Damage out (red), Healing (blue), Damage in (black)");
+        
+        $PAGE .= $pm->tabStart("Plot");
+        $PAGE .= $pm->tableStart();
+        $PAGE .= $pm->tableHeader("Plot", @plotHeader);
+        $PAGE .= $pm->tableEnd;
+
+        #Insert flotplot
+        #this is dummy code
+        $PAGE .= <<END;
+<div id="mainplot" style="width:700px;height:300px;"></div>
+<div id="miniplot" style="width:700px;height:100px;"></div>
+<div id="plothover"></div>
+<script id="source" language="javascript" type="text/javascript">
+\$(function () {
+    var dps = $dpsString;
+    var heal = $healString;
+    var din = $dinString;
+
+    var options = {
+        series: {
+            lines: { show: true },
+            points: { show: false }
+        },
+        xaxis: { mode: "time", ticks: 6 },
+        yaxis: { ticks: 10 },
+        selection: { mode: "x" },
+        crosshair: {mode: "x" },
+        grid: { hoverable: true, autoHighlight: false $markString}
+    };
     
+    var mainplot = \$.plot(\$("#mainplot"), [ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = --------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = --------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = --------"} ], options);
+    var legends = \$("#mainplot .legendLabel");
+    legends.each(function () {
+        // fix the widths so they don't jump around
+        \$(this).css('width', \$(this).width());
+    });
+
+    var updateLegendTimeout = null;
+    var latestPosition = null;
+
+$deathToolTip
+
+    function updateLegend() {
+        updateLegendTimeout = null;
+        
+        var pos = latestPosition;
+        var axes = mainplot.getAxes();
+        if (pos.x < axes.xaxis.min || pos.x > axes.xaxis.max ||
+            pos.y < axes.yaxis.min || pos.y > axes.yaxis.max)
+            return;
+
+        var i, j, dataset = mainplot.getData();
+        for (i = 0; i < dataset.length; ++i) {
+            var series = dataset[i];
+
+            // find the nearest points, x-wise
+            for (j = 0; j < series.data.length; ++j)
+                if (series.data[j][0] > pos.x)
+                    break;
+            
+            // now interpolate
+            var y, p1 = series.data[j - 1], p2 = series.data[j];
+            if (p1 == null)
+                y = p2[1];
+            else if (p2 == null)
+                y = p1[1];
+            else
+                y = p1[1] + (p2[1] - p1[1]) * (pos.x - p1[0]) / (p2[0] - p1[0]);
+            legends.eq(i).text(series.label.replace(/=.*/, "= " + y.toFixed(0)));
+        }
+    }
+    
+    \$("#mainplot").bind("plothover",  function (event, pos, item) {
+        latestPosition = pos;
+        if (!updateLegendTimeout)
+            updateLegendTimeout = setTimeout(updateLegend, 50);
+$deathLegendAddition
+    });
+
+    var miniplot = \$.plot(\$("#miniplot"), [ {data:dps,color:"rgb(255,0,0)"}, {data:heal,color:"rgb(0,0,255)"}, {data:din,color:"rgb(0,0,0)"} ], {
+        legend: { show: false },
+        series: {
+            lines: { show: true, lineWidth: 1 },
+            shadowSize: 0
+        },
+        xaxis: { ticks: 6, mode: "time" },
+        yaxis: { ticks: 2 },
+        grid: { color: "#999" $markString},
+        selection: { mode: "x" }
+    });
+    
+    \$("#mainplot").bind("plotselected", function (event, ranges) {
+        // clamp the zooming to prevent eternal zoom
+        if (ranges.xaxis.to - ranges.xaxis.from < 0.00001)
+            ranges.xaxis.to = ranges.xaxis.from + 0.00001;
+        
+        // do the zooming
+        mainplot = \$.plot(\$("#mainplot"),[ {data:dps,color:"rgb(255,0,0)", label:"Dmg out = -------"}, {data:heal,color:"rgb(0,0,255)", label:"Healing = -------"}, {data:din,color:"rgb(0,0,0)", label:"Dmg in = -------"} ],
+                      \$.extend(true, {}, options, {
+                          xaxis: { min: ranges.xaxis.from, max: ranges.xaxis.to }
+                      }));
+        // reset legends
+        legends = \$("#mainplot .legendLabel");
+        legends.each(function () {
+        // fix the widths so they don't jump around
+        \$(this).css('width', \$(this).width());
+    });
+        // don't fire event on the overview to prevent eternal loop
+        miniplot.setSelection(ranges, true);
+    });
+    \$("#miniplot").bind("plotselected", function (event, ranges) {
+        mainplot.setSelection(ranges);
+    });
+    
+});
+</script>        
+
+END
+        if ($smooth) {$PAGE .= "<div>Smoothed with window of +- $smooth seconds.</div>\n";}
+        $PAGE .= $pm->tabEnd;
+        
+    }
     #####################
     # PRINT HTML FOOTER #
     #####################
-    
-    $PAGE .= $pm->jsTab("Damage Out");
+    if ($self->{plot}) {
+        $PAGE .= $pm->jsTab("Plot");
+    } else {$PAGE .= $pm->jsTab("Damage Out");} #This is necessary as flot hates being hidden
     $PAGE .= $pm->tabBarEnd;
     $PAGE .= $pm->pageFooter;
     
@@ -554,7 +891,7 @@ sub page {
         # PRINT OPENING XML TAG #
         #########################
         
- 	$XML .= sprintf( '  <raid dpstime="%d" start="%s" dps="%d" comment="%s" lg="%d" dmg="%d" dir="%s" zone="%s" heroic="%d">' . "\n",            100,
+     $XML .= sprintf( '  <raid dpstime="%d" start="%s" dps="%d" comment="%s" lg="%d" dmg="%d" dir="%s" zone="%s" heroic="%d">' . "\n",            100,
             $raidStart*1000,
             $raidDPS,
             $self->{name},
@@ -562,7 +899,7 @@ sub page {
             $raidDamage,
             $self->{dirname},
             Stasis::LogSplit->zone( $self->{short} ) || "",
-			$self->{heroic} || 0,
+            $self->{heroic} || 0,
         );
 
         #########################

@@ -47,7 +47,7 @@ sub actions {
 }
 
 sub value {
-    qw/hitCount hitTotal hitEffective hitMin hitMax critCount critTotal critEffective critMin critMax tickCount tickTotal tickEffective tickMin tickMax tickCritCount/;
+    qw/hitCount hitTotal hitEffective hitMin hitMax critCount critTotal critEffective critMin critMax tickCount tickTotal tickEffective tickMin tickMax tickCritCount healingAtTime/;
 }
 
 sub process_healing {
@@ -100,7 +100,8 @@ sub process_healing {
     $hdata->{"${type}Count"} += 1;
     $hdata->{"${type}Total"} += $event->{amount};
     $hdata->{"${type}Effective"} += $effective;
-    
+    $hdata->{"healingAtTime"}{$event->timeInSeconds()} += $event->{amount};
+
     # Update min/max hit size.
     $hdata->{"${type}Min"} = $event->{amount}
         if( 
