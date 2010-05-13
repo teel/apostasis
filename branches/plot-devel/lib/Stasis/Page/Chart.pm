@@ -126,7 +126,7 @@ sub page {
     if (defined ($heroism->{spans})) {
         foreach (@{$heroism->{spans}}) {
             my ($htmps,$htmpe) = unpack "dd",$_;
-            if ($htmpe-$htmps > 45) {print "Detected a heroism/bloodlust lasting longer than 45s. This should not be happening. If you can submit a bug to http://code.google.com/p/apostasis ideally with logs attached, it'd be much appreciated!\n";}
+            if ($htmpe-$htmps > 45) {$htmpe=$htmps+45;}
             $htmps*=1000; $htmpe*=1000;
             push @herostart, $htmps; push @heroend, $htmpe;
         }
