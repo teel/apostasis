@@ -1324,7 +1324,7 @@ our @fingerprints = (
     heroic          => [ ],
     normal          => [ ],
 
-}
+},
 
 ################
 # RUBY SANCTUM #
