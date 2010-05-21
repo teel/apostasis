@@ -1326,6 +1326,22 @@ our @fingerprints = (
 
 }
 
+################
+# RUBY SANCTUM #
+################
+
+{
+    short           => "halion",
+    zone            => "rubysanctum",
+    long            => "Halion",
+    mobStart        => [ 39863 ],
+    mobContinue     => [ 39863 ],
+    mobEnd          => [ 39863 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+
+}
 
 );
 
