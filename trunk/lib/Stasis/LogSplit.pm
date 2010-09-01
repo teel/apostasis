@@ -1244,7 +1244,7 @@ our @fingerprints = (
     mobStart        => [ 36597 ],
     mobContinue     => [ 36597, 37695, 37698, 36701, 36633, 37098, 37799, 38579, 38995 ],
     mobEnd          => [ 36597 ],
-    timeout         => 240,
+    timeout         => 180,
     heroic          => [ 73780, 73781 ],
     normal          => [ 70541 ],
 
