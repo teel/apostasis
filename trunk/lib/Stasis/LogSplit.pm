@@ -1338,7 +1338,7 @@ our @fingerprints = (
     mobContinue     => [ 39863 ],
     mobEnd          => [ 39863 ],
     timeout         => 30,
-    heroic          => [ ],
+    heroic          => [ 74527, 74528 ], #untested
     normal          => [ ],
 
 }
