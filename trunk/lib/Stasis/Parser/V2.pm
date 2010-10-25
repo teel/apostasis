@@ -28,7 +28,6 @@ use warnings;
 
 use Stasis::Parser;
 use Stasis::Event qw/%action_map :constants/;
-use Data::Dumper;
 our @ISA = "Stasis::Parser";
 
 my @fspell      = qw/spellid spellname spellschool/;
@@ -42,7 +41,7 @@ my @fheal_wlk   = qw/amount extraamount critical/;
 my @fheal_wlk32 = qw/amount extraamount absorbed critical/;
 my @fenergize   = qw/amount powertype extraamount/;
 my @faura       = qw/auratype amount/;
-my @faura_shield = qw/auratype amount shield1 shield2 shield3/;
+my @faura_shield = qw/auratype amount shield1 shield2/;
 my @fenv        = qw/environmentaltype/;
 
 # Returns compact hashes for v2 logs.
