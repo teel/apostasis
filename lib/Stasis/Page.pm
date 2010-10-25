@@ -171,7 +171,7 @@ sub _avoidanceText {
 
 sub _addHCT {
     my ($self, $sdata, $suffix) = @_;
-    return ($sdata->{"hit$suffix"}||0) + ($sdata->{"crit$suffix"}||0) + ($sdata->{"tick$suffix"}||0);
+    return ($sdata->{"hit$suffix"}||0) + ($sdata->{"crit$suffix"}||0) + ($sdata->{"tick$suffix"}||0) + ($sdata->{"absorb$suffix"}||0);
 }
 
 sub _rowDamage {
@@ -208,14 +208,15 @@ sub _rowHealing {
         "R-%" => $sdata->{effective} && $mnum && _tidypct( $sdata->{effective} / $mnum * 100 ),
         "R-Overheal" => $sdata->{total} && sprintf( "%0.1f%%", ($sdata->{total} - ($sdata->{effective}||0) ) / $sdata->{total} * 100 ),
         "R-Count" => $sdata->{count}||0,
-        "R-Direct" => (($sdata->{hitCount}||0) + ($sdata->{critCount}||0)) && $self->{pm}->tip( sprintf( "%d", ($sdata->{hitCount}||0) + ($sdata->{critCount}||0) ), join( "<br />", map { $sdata->{$_ . "Count"} ? $sdata->{$_ . "Count"} . " ${_}s" : () } qw/hit crit/ ) ),
-        "R-Hits" => $sdata->{hitCount} && sprintf( "%d", $sdata->{hitCount} ),
-        "R-AvHit" => $sdata->{hitCount} && $sdata->{hitTotal} && $self->{pm}->tip( int($sdata->{hitTotal} / $sdata->{hitCount}), sprintf( "Range: %d&ndash;%d", $sdata->{hitMin}, $sdata->{hitMax} ) ),
+        "R-Direct" => $sdata->{absorbCount} || (($sdata->{hitCount}||0) + ($sdata->{critCount}||0)) && $self->{pm}->tip( sprintf( "%d", ($sdata->{hitCount}||0) + ($sdata->{critCount}||0) ), join( "<br />", map { $sdata->{$_ . "Count"} ? $sdata->{$_ . "Count"} . " ${_}s" : () } qw/hit crit/ ) ),
+        "R-Hits" => $sdata->{absorbCount} || $sdata->{hitCount} && sprintf( "%d", $sdata->{hitCount} ),
+        "R-AvHit" => ($sdata->{absorbCount} && $sdata->{absorbEffective} && sprintf( "%d", int($sdata->{absorbEffective}/$sdata->{absorbCount}) )) || $sdata->{hitCount} && $sdata->{hitTotal} && $self->{pm}->tip( int($sdata->{hitTotal} / $sdata->{hitCount}), sprintf( "Range: %d&ndash;%d", $sdata->{hitMin}, $sdata->{hitMax} ) ),
         "R-Ticks" => $sdata->{tickCount} && sprintf( "%d", $sdata->{tickCount} ),
         "R-AvTick" => $sdata->{tickCount} && $sdata->{tickTotal} && $self->{pm}->tip( int($sdata->{tickTotal} / $sdata->{tickCount}), sprintf( "Range: %d&ndash;%d", $sdata->{tickMin}, $sdata->{tickMax} ) ),
         "R-Crits" => $sdata->{critCount} && sprintf( "%d", $sdata->{critCount} ),
         "R-AvCrit" => $sdata->{critCount} && $sdata->{critTotal} && $self->{pm}->tip( int($sdata->{critTotal} / $sdata->{critCount}), sprintf( "Range: %d&ndash;%d", $sdata->{critMin}, $sdata->{critMax} ) ),
         "R-% Crit" => $self->{pm}->tip( _cricruglaText($sdata) ),
+        "R-AvAbsorb" => $sdata->{absorbCount} && $sdata->{absorbTotal} && sprintf( "%d", int($sdata->{absorbTotal}/$sdata->{absorbCount})),
 	};
 }
 

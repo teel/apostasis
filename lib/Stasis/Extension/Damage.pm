@@ -47,7 +47,7 @@ sub key {
 }
 
 sub value {
-    qw/count hitCount hitTotal hitMin hitMax critCount critTotal critMin critMax tickCount tickTotal tickMin tickMax tickCritCount partialResistCount partialBlockCount partialAbsorbCount partialResistTotal partialBlockTotal partialAbsorbTotal crushing glancing dodgeCount absorbCount resistCount parryCount missCount blockCount reflectCount deflectCount immuneCount damageAtTime/;
+    qw/count hitCount hitTotal hitMin hitMax critCount critTotal critMin critMax tickCount tickTotal tickMin tickMax tickCritCount partialResistCount partialBlockCount partialAbsorbCount partialResistTotal partialBlockTotal partialAbsorbTotal crushing glancing dodgeCount absorbCount resistCount parryCount missCount blockCount reflectCount deflectCount immuneCount damageAtTime/; 
 }
 
 sub process {

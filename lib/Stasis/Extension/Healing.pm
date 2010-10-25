@@ -25,7 +25,6 @@ package Stasis::Extension::Healing;
 
 use strict;
 use warnings;
-
 use Stasis::Extension;
 use Stasis::Event qw/:constants/;
 
@@ -43,11 +42,13 @@ sub start {
 sub actions {
     map( { $_ => \&process_healing } qw/SPELL_HEAL SPELL_PERIODIC_HEAL/ ),
     
-    map( { $_ => \&process_damage } qw/ENVIRONMENTAL_DAMAGE SWING_DAMAGE RANGE_DAMAGE SPELL_DAMAGE DAMAGE_SPLIT SPELL_PERIODIC_DAMAGE DAMAGE_SHIELD/ )
+    map( { $_ => \&process_damage } qw/ENVIRONMENTAL_DAMAGE SWING_DAMAGE RANGE_DAMAGE SPELL_DAMAGE DAMAGE_SPLIT SPELL_PERIODIC_DAMAGE DAMAGE_SHIELD/ ),
+
+    map( { $_ => \&process_absorb } qw/SPELL_AURA_APPLIED SPELL_AURA_REFRESH SPELL_AURA_REMOVED/ )
 }
 
 sub value {
-    qw/hitCount hitTotal hitEffective hitMin hitMax critCount critTotal critEffective critMin critMax tickCount tickTotal tickEffective tickMin tickMax tickCritCount healingAtTime/;
+    qw/hitCount hitTotal hitEffective hitMin hitMax critCount critTotal critEffective critMin critMax tickCount tickTotal tickEffective tickMin tickMax tickCritCount absorbCount absorbTotal absorbLastSeen healingAtTime/;
 }
 
 sub process_healing {
@@ -114,6 +115,50 @@ sub process_healing {
             !$hdata->{"${type}Max"} ||
             $event->{amount} > $hdata->{"${type}Max"}
         );
+}
+
+sub process_absorb {
+    my ($self, $event) = @_;
+    #Check this was a shielding event - it will have shield1 defined
+    if (defined $event->{shield1}) {
+        # This was a shield change - we'll put it in a healing hash. Create an empty hash if it does not exist yet.
+        my $hdata = ($self->{actors}{ $event->{actor} }{ $event->{spellid} }{ $event->{target} } ||= {});
+        # Add to targets.
+        $self->{targets}{ $event->{target} }{ $event->{spellid} }{ $event->{actor} } ||= $hdata;
+        if ($event->{action} == SPELL_AURA_REFRESH) {
+            # I need to know what value the shield was at before, so I can find the difference - this is set when the aura is applied below
+            # If SPELL_AURA_REFRESH it is the damage absorbed - this is the one we care about most
+
+            # Figure out how much effective healing there was.
+            my $absorbed;
+            # This is unfortunate, but we won't know the strength of the shield if it is applied before the pull - we'll just have to drop this absorb amount until I find a better solution
+            unless (defined $hdata->{"absorbLastSeen"}) {$hdata->{"absorbLastSeen"} += $event->{amount}; $hdata->{"absorbTotal"} += $event->{amount};}
+            $absorbed = $hdata->{"absorbLastSeen"} - $event->{amount};
+            if ($absorbed < 0) { #This is the reapplication of an amount - it's not effective healing
+                $absorbed = 0;
+            }
+            #Set the new shield strength
+            $hdata->{"absorbLastSeen"} = $event->{amount};
+            
+            # Add this as the appropriate kind of healing: tick, hit, or crit.
+        
+            # Add total healing to the healer.
+            $hdata->{"absorbCount"} += 1;
+            $hdata->{"absorbEffective"} += $absorbed;
+            $hdata->{"absorbTotal"} += $absorbed;
+            $hdata->{"healingAtTime"}{$event->timeInSeconds()} += $event->{amount}; #Count this in plots as healing
+        }
+        if ($event->{action} == SPELL_AURA_APPLIED) {
+            # If SPELL_AURA_APPLIED it is setting the total shield present
+            $hdata->{"absorbLastSeen"} = $event->{amount};
+            $hdata->{"absorbTotal"} += $event->{amount}; #Total absorb is always the total cast
+
+        }
+        if ($event->{action} == SPELL_AURA_REMOVED) {
+            # If SPELL_AURA_REMOVED we have lost the remaining shield
+            $hdata->{"absorbLastSeen"} = 0;
+        }
+    }
 }
 
 sub process_damage {
