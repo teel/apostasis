@@ -780,7 +780,7 @@ ENDTOOLTIP
         },
         xaxis: { mode: "time", ticks: 6 },
         yaxis: { ticks: 10 },
-        selection: { mode: "x" },
+        selection: { mode: "xy" },
         crosshair: {mode: "x" },
         grid: { hoverable: true, autoHighlight: false $markString}
     };
@@ -843,7 +843,7 @@ $deathLegendAddition
         xaxis: { ticks: 6, mode: "time" },
         yaxis: { ticks: 2 },
         grid: { color: "#999" $markString},
-        selection: { mode: "x" }
+        selection: { mode: "xy" }
     });
     
     \$("#mainplot").bind("plotselected", function (event, ranges) {
