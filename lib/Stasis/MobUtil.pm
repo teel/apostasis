@@ -34,7 +34,7 @@ our @EXPORT_OK = qw/splitguid joinguid/;
 sub splitguid($) {
     my ( $guid ) = @_;
     if( length $guid == 18 && $guid =~ /^0x/ ) {
-        return ( hex( substr $guid, 2, 4 ), hex( substr $guid, 6, 6 ), hex( substr $guid, 12, 6 ) );
+        return ( hex( substr $guid, 2, 4 ), hex( substr $guid, 6, 4 ), hex( substr $guid, 10, 8 ) );
     } else {
         return ( 0, 0, 0 );
     }

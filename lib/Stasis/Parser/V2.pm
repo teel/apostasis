@@ -28,6 +28,7 @@ use warnings;
 
 use Stasis::Parser;
 use Stasis::Event qw/%action_map :constants/;
+use Data::Dumper;
 our @ISA = "Stasis::Parser";
 
 my @fspell      = qw/spellid spellname spellschool/;
@@ -41,6 +42,7 @@ my @fheal_wlk   = qw/amount extraamount critical/;
 my @fheal_wlk32 = qw/amount extraamount absorbed critical/;
 my @fenergize   = qw/amount powertype extraamount/;
 my @faura       = qw/auratype amount/;
+my @faura_shield = qw/auratype amount shield1 shield2 shield3/;
 my @fenv        = qw/environmentaltype/;
 
 # Returns compact hashes for v2 logs.
@@ -146,7 +148,12 @@ sub parse {
         $action == SPELL_AURA_REMOVED_DOSE ||
         $action == SPELL_AURA_REFRESH
     ) {
-        @{$result}{ (@fspell, @faura) } = @col;
+        if( @col <= 5) {
+            @{$result}{ (@fspell, @faura) } = @col;
+        } else {
+            @{$result}{ (@fspell, @faura_shield) } = @col;
+        }
+   #print Dumper(@col);
     } elsif(
         $action == ENCHANT_APPLIED ||
         $action == ENCHANT_REMOVED
