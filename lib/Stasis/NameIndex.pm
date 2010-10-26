@@ -74,17 +74,18 @@ sub spellname {
     if( $spell ) {
         if( $self->{spells}{$spell} ) {
             my $sd = Stasis::SpellUtil->spell($spell);
-            my $r = !$no_rank && $sd && $sd->{rank};
+            #Disabling rank for patch 4.0
+            #my $r = !$no_rank && $sd && $sd->{rank};
             
-            if( $r && $r =~ /^[0-9]+$/ ) {
-                $r = "r$r";
-            }
+            #if( $r && $r =~ /^[0-9]+$/ ) {
+            #    $r = "r$r";
+            #}
             
-            if( wantarray ) {
-                return ($self->{spells}{$spell}, $r);
-            } else {
-                return $self->{spells}{$spell} . ($r ? " ($r)" : "");
-            }
+            #if( wantarray ) {
+            #    return ($self->{spells}{$spell}, $r);
+            #} else {
+                return $self->{spells}{$spell};
+            #}
         } else {
             return $spell;
         }
