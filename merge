@@ -148,21 +148,6 @@ open INPUT1,$file1 or die "Couldn't open $file1.";
 open INPUT2,$file2 or die "Couldn't open $file2.";
 open OUTPUT, "> $outputfile" or die "Couldn't open $outputfile for writing.";
 
-#Find which file has the earliest timestamp;
-my $line1=<INPUT1>; my $line2=<INPUT2>;
-($timestamp1,$datastring)=&parseline($line1);
-$timestamp1 -= $offset1;
-($timestamp2,$datastring)=&parseline($line2);
-$timestamp2 -= $offset2;
-close INPUT1; close INPUT2;
-if ($timestamp2<$timestamp1) {
-    #switch
-    ($file1,$file2)=($file2,$file1);
-    ($offset1,$offset2)=($offset2,$offset1);
-    print "Reversed file order, $file2 starts earlier than $file1.\n";
-}
-
-open INPUT1,$file1; open INPUT2,$file2;
 print "Beginning parse of $file1.\n";
 while ($line=<INPUT1>) {
     ($timestamp,$datastring)=&parseline($line);
