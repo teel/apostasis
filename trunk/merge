@@ -244,7 +244,6 @@ foreach my $key (@sorted) {
          else {$millisec = $1;}
          my $time = sprintf("%02s",$localtime[2]) . ":" . sprintf("%02s",$localtime[1]) . ":" . sprintf("%02s",$localtime[0]) . "." . $millisec;
          #Reclaim event string
-         if (!defined $completeeventhash{$event.$key}) {die "$event KK $key xx $eventhash{$event}";}
          my $fullevent = $completeeventhash{$event.$key};
          print OUTPUT "$month/$mday $time  $fullevent\n";
      }
