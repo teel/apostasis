@@ -1,0 +1,267 @@
+#!/usr/bin/perl -w
+# Copyright (c) 2010, Edd Edmondson, 2008 Gian Merlino
+# All rights reserved.
+#
+# Redistribution and use in source and binary forms, with or without
+# modification, are permitted provided that the following conditions are met:
+#
+#    1. Redistributions of source code must retain the above copyright
+#       notice, this list of conditions and the following disclaimer.
+#    2. Redistributions in binary form must reproduce the above copyright
+#       notice, this list of conditions and the following disclaimer in the
+#       documentation and/or other materials provided with the distribution.
+#
+# THIS SOFTWARE IS PROVIDED BY THE AUTHOR ``AS IS'' AND ANY EXPRESS OR IMPLIED
+# WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF
+# MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO
+# EVENT SHALL THE AUTHOR BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+# SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+# PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS;
+# OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, 
+# WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR 
+# OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
+# ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+=head1 NAME
+
+merge - WoW combat log merging tool
+
+=head1 DESCRIPTION
+
+This program will read in two WoW combat logs and attempt to identify
+identical events in each, and output a union of the two containing only one
+of each event. This log may then be parsed by any other combat log parser.
+
+For more information visit I<http://code.google.com/p/apostasis/>.
+
+=head1 SYNOPSIS
+
+Merge logs a.txt and b.txt to merged.txt
+    merge -file1 a.txt -file2 b.txt -output merged.txt
+
+=head1 USAGE
+
+    merge [options]
+
+=head2 Options
+
+The following options are required:
+B<-file1>       Sets the first input file
+
+B<-file2>       Sets the second input file
+
+B<-output>      Sets the output file
+
+Some parameters of the merge are adjustable as follows. If not set, a default
+value is used.
+
+B<-offset1>     Sets the time offset in seconds of the first log, 
+                  default 0
+
+B<-offset2>     Sets the time offset in seconds of the second log, 
+                  default 0
+
+B<-flexibility> Sets the match distance in seconds, default 0.3
+
+=head1 BUGS
+
+http://code.google.com/p/apostasis/
+
+Use the "Issues" tab.
+
+=cut
+
+use strict;
+use POSIX;
+use Getopt::Long;
+
+my $offset1 = 0 * 60 * 60; #Optionally offset the timestamps of one file by this amount - e.g. for timezone differences
+my $offset2 = 0 * 60 * 60;
+my $flexibility=0.3; #0.3 seconds flexibility in matching events
+my $file1;
+my $file2;
+my $outputfile;
+my $opts = GetOptions(
+    "flexibility=f" => \$flexibility,
+    "offset1=f" => \$offset1,
+    "offset2=f" => \$offset2,
+    "file1=s" => \$file1,
+    "file2=s" => \$file2,
+    "output=s" => \$outputfile
+);
+
+our $stamp_regex = qr/^(\d+)\/(\d+) (\d+):(\d+):(\d+)\.(\d+)  (.*?)[\r\n]*$/s;
+our $csv_regex = qr/,(?=(?:[^\"]*\"[^\"]*\")*(?![^\"]*\"))/;
+our $year = strftime "%Y", localtime; #Assume this year
+
+sub parseline {
+    my $line = $_[0];
+    my $data;
+    my $timestamp;
+    if ($line =~ $stamp_regex) {
+        $timestamp=POSIX::mktime(
+            $5,                      # sec
+            $4,                      # min
+            $3,                      # hour
+            $2,                      # mday
+            $1 - 1,                  # mon
+            $year,    # year
+            0,                       # wday
+            0,                       # yday
+            -1                       # is_dst
+        ) + $6 / 1000; #apply offset outside function
+        $data=$7;
+    } else { $timestamp = 0; $data=' '; }
+    return ($timestamp,$data);
+}
+
+sub reducedata {
+    #Takes a string (without timestamp) and removes values that may vary across logs
+    #This is stuff like wowpedia.org/UnitFlag - what apostasis calls target_relationship
+    my $eventstring = $_[0];
+    my $reducedevent;
+    my @data = map { $_ eq "nil" ? "" : $_ } map {s/"//g; $_;} split $csv_regex, $eventstring;
+    for (my $i=0;$i<$#data;$i++) {
+       if ( ($i != 3) && ($i != 6) ) { $reducedevent .= $data[$i] } 
+    }
+    return $reducedevent;
+}
+
+my $line; #stores the current log line
+my $timestamp; #stores the timestamp of the current event
+my $datastring; #stores the event data
+my $reduceddata; #stores event data without relationship flags;
+my %eventhash; #We put all events in a hash based on their non-timestamp details (ignoring relationship flags)
+my %timehash; #We put all events (fully-specified) in a hash here keyed on timestamp rather than event
+my %completeeventhash; #We have all events (ignoring relationship flags) plus timestamps as keys, fully specified events as values
+my $match=0; #flag for matching events
+
+my ($timestamp1,$timestamp2);
+my @data;
+
+my $hpeakmax=0; #biggest value in histogram
+my $hpeakkey; #key for that value
+my %histogram; #records all offsets even for events considered not to match. This is so we can warn if the offsets aren't looking like the best values
+
+open INPUT1,$file1 or die "Couldn't open $file1.";
+open INPUT2,$file2 or die "Couldn't open $file2.";
+open OUTPUT, "> $outputfile" or die "Couldn't open $outputfile for writing.";
+
+#Find which file has the earliest timestamp;
+my $line1=<INPUT1>; my $line2=<INPUT2>;
+($timestamp1,$datastring)=&parseline($line1);
+$timestamp1 -= $offset1;
+($timestamp2,$datastring)=&parseline($line2);
+$timestamp2 -= $offset2;
+close INPUT1; close INPUT2;
+if ($timestamp2<$timestamp1) {
+    #switch
+    ($file1,$file2)=($file2,$file1);
+    ($offset1,$offset2)=($offset2,$offset1);
+    print "Reversed file order, $file2 starts earlier than $file1.\n";
+}
+
+open INPUT1,$file1; open INPUT2,$file2;
+print "Beginning parse of $file1.\n";
+while ($line=<INPUT1>) {
+    ($timestamp,$datastring)=&parseline($line);
+    $timestamp -= $offset1;
+    if ($timestamp != 0) {
+        $reduceddata=&reducedata($datastring);
+        #Push the event in the array in the hash, or make the array to put in the hash
+        if (defined $eventhash{$reduceddata}) {
+            push @{$eventhash{$reduceddata}},$timestamp;
+        } else {
+            $eventhash{$reduceddata} = [$timestamp];
+        }
+        $completeeventhash{$reduceddata.$timestamp}=$datastring;
+    }
+}
+close INPUT1;
+print "Parsed $file1.\n";
+print "Beginning parse of $file2.\n";
+while ($line=<INPUT2>) {
+    ($timestamp,$datastring) = parseline($line);
+    $timestamp -= $offset2;
+    if ($timestamp != 0) {
+        $reduceddata=&reducedata($datastring);
+        if (defined $eventhash{$reduceddata}) {
+            #We need to check if the event is already in the hash or if it's an identical event at a different time
+            my @preexistingtimestamps = @{$eventhash{$reduceddata}};
+            foreach (@preexistingtimestamps) {
+                #record in the histogram hash, just in case
+                #key is integer units based on flexibility
+                $histogram{ int(($_-$timestamp)/$flexibility) } += 1;
+                if ( abs($_ - $timestamp) < $flexibility ) {
+                    #we assume it's a matched event, flag it
+                    $match=1;
+                }
+            }
+            if ($match == 0) {
+                #No match, so the event is new. Put it in the hash.
+                push @{$eventhash{$reduceddata}},$timestamp;
+                $completeeventhash{$reduceddata.$timestamp}=$datastring;
+            }
+            $match = 0;
+        } else {
+            #The event is definitely new, put it in the hash
+            $eventhash{$reduceddata} = [$timestamp];
+            $completeeventhash{$reduceddata.$timestamp}=$datastring;
+        }
+    }
+}
+close INPUT2;
+print "Parsed $file2.\n";
+
+print "Checking histogram.\n";
+foreach my $key (keys %histogram) {
+   if ($histogram{$key} > $hpeakmax) {
+      $hpeakmax = $histogram{$key};
+      $hpeakkey = $key;
+   }
+}
+if ( abs($hpeakkey * $flexibility) > 1 ) {
+    print "Better offset detected at ",$hpeakkey*$flexibility," seconds (time of $file1 - $file2). It may be advisable to rerun with offsets adjusted.\n";
+}
+
+print "Constructing merged log.\n";
+
+#We need to sort all events by timestamp
+#We do this by basically swapping keys and values (allowing for the fact values are in arrays)
+#Then we sort on keys (now timestamps), convert timestamps back and write the reconstructed log event out
+#We need to allow for different events happening at the same time too
+foreach my $key (keys %eventhash) {
+    my @arr = @{$eventhash{$key}};
+    foreach my $value (@arr) {
+        if (defined $timehash{$value}) {
+             push @{$timehash{$value}},$key;
+        } else {
+             $timehash{$value} = [$key];
+        }         
+    }
+}
+
+my @sorted = sort {$a <=> $b} keys %timehash;
+
+foreach my $key (@sorted) {
+     foreach my $event (@{$timehash{$key}}) {
+         #Print
+         ##Reconstruct time string
+         my @localtime = localtime($key);
+         my $month=$localtime[4]+1;
+         my $mday=$localtime[3];
+         $key =~ /\.(.+)/; #gets fractional part of seconds
+         my $millisec;
+         if (! defined($1)) {$millisec="000";}
+         elsif (length $1 == 1) {$millisec = $1 . "00";} 
+         elsif (length $1 == 2) {$millisec = $1 . "0";} 
+         else {$millisec = $1;}
+         my $time = sprintf("%02s",$localtime[2]) . ":" . sprintf("%02s",$localtime[1]) . ":" . sprintf("%02s",$localtime[0]) . "." . $millisec;
+         #Reclaim event string
+         if (!defined $completeeventhash{$event.$key}) {die "$event KK $key xx $eventhash{$event}";}
+         my $fullevent = $completeeventhash{$event.$key};
+         print OUTPUT "$month/$mday $time  $fullevent\n";
+     }
+}
+
+close OUTPUT;
