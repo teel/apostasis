@@ -138,7 +138,6 @@ http://code.google.com/p/apostasis/
 Use the "Issues" tab.
 
 =cut
-
 use strict;
 use warnings;
 use lib 'lib';
