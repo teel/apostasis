@@ -46,6 +46,7 @@ Merge logs a.txt and b.txt to merged.txt
 =head2 Options
 
 The following options are required:
+
 B<-file1>       Sets the first input file
 
 B<-file2>       Sets the second input file
