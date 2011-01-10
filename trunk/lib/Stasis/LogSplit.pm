@@ -1373,7 +1373,7 @@ our @fingerprints = (
     normal          => [ ],
 },
 {
-    short           => "twilight council",
+    short           => "twilightcouncil",
     zone            => "bastionoftwilight",
     long            => "Twilight Ascendant Council",
     mobStart        => [ 43735, 43687, 43686, 43688, 43689 ],
@@ -1384,7 +1384,7 @@ our @fingerprints = (
     normal          => [ ],
 },
 {
-    short           => "cho'gall",
+    short           => "chogall",
     zone            => "bastionoftwilight",
     long            => "Cho'gall",
     mobStart        => [ 43324 ],
