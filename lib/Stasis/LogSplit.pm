@@ -55,6 +55,10 @@ our %zones = (
     "coliseum" => "Crusaders' Coliseum",
     "onyxia" => "Onyxia's Lair",
     "icecrown" => "Icecrown Citadel",
+    "baradinhold" => "Baradin Hold",
+    "blackwingdescent" => "Blackwing Descent",
+    "bastionoftwilight" => "Bastion of Twilight",
+    "fourwinds" => "Throne of the Four Winds",
 );
 
 # Fingerprints of various boss encounters.
@@ -1341,7 +1345,168 @@ our @fingerprints = (
     heroic          => [ 74527, 74528 ], #untested
     normal          => [ ],
 
-}
+},
+
+#######################
+# Bastion of Twilight #
+#######################
+{
+    short           => "halfus",
+    zone            => "bastionoftwilight",
+    long            => "Halfus Wyrmbreaker",
+    mobStart        => [ 44600 ],
+    mobContinue     => [ 44600, 44652, 44645, 44797, 44650, 44641 ],
+    mobEnd          => [ 44600 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "dragontwins",
+    zone            => "bastionoftwilight",
+    long            => "Valiona & Theralion",
+    mobStart        => [ 45992, 45993 ],
+    mobContinue     => [ 45992, 45993 ],
+    mobEnd          => [ 45992, 45993 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "twilight council",
+    zone            => "bastionoftwilight",
+    long            => "Twilight Ascendant Council",
+    mobStart        => [ 43735, 43687, 43686, 43688, 43689 ],
+    mobContinue     => [ 43735, 43687, 43686, 43688, 43689 ],
+    mobEnd          => [ 43735, 43687, 43686, 43688, 43689 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "cho'gall",
+    zone            => "bastionoftwilight",
+    long            => "Cho'gall",
+    mobStart        => [ 43324 ],
+    mobContinue     => [ 43324 ],
+    mobEnd          => [ 43324 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+#####################
+# Blackwing Descent #
+#####################
+{
+    short           => "magmaw",
+    zone            => "blackwingdescent",
+    long            => "Magmaw",
+    mobStart        => [ 41570 ],
+    mobContinue     => [ 41570 ],
+    mobEnd          => [ 41570 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "omnitron",
+    zone            => "blackwingdescent",
+    long            => "Omnitron Defense System",
+    mobStart        => [ 42180, 42179, 42178, 42166 ],
+    mobContinue     => [ 42180, 42179, 42178, 42166 ],
+    mobEnd          => [ 42180, 42179, 42178, 42166 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "maloriak",
+    zone            => "blackwingdescent",
+    long            => "Maloriak",
+    mobStart        => [ 41378 ],
+    mobContinue     => [ 41378 ],
+    mobEnd          => [ 41378 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "atramedes",
+    zone            => "blackwingdescent",
+    long            => "Atramedes",
+    mobStart        => [ 41442 ],
+    mobContinue     => [ 41442 ],
+    mobEnd          => [ 41442 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "chimaeron",
+    zone            => "blackwingdescent",
+    long            => "Chimaeron",
+    mobStart        => [ 43296 ],
+    mobContinue     => [ 43296 ],
+    mobEnd          => [ 43296 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "nefarian",
+    zone            => "blackwingdescent",
+    long            => "Nefarian",
+    mobStart        => [ 41376 ],
+    mobContinue     => [ 41376 ],
+    mobEnd          => [ 41376 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+##############
+# Four Winds #
+##############
+
+{
+    short           => "conclave",
+    zone            => "fourwinds",
+    long            => "Conclave of Wind",
+    mobStart        => [ 45870, 45871, 45872 ],
+    mobContinue     => [ 45870, 45871, 45872, 45812 ],
+    mobEnd          => [ 45870, 45871, 45872 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ]<
+},
+
+{
+    short           => "alakir",
+    zone            => "fourwinds",
+    long            => "Al'Akir",
+    mobStart        => [ 46753 ],
+    mobContinue     => [ 46753, 47175 ],
+    mobEnd          => [ 46753 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ]<
+},
+
+################
+# Baradin Hold #
+################
+{
+    short           => "argaloth",
+    zone            => "baradinhold",
+    long            => "Argaloth",
+    mobStart        => [ 47120 ],
+    mobContinue     => [ 47120 ],
+    mobEnd          => [ 47120 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
 
 );
 
