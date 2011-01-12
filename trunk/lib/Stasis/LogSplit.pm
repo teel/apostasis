@@ -1410,9 +1410,9 @@ our @fingerprints = (
     normal          => [ ],
 },
 {
-    short           => "omnitron",
+    short           => "omnotron",
     zone            => "blackwingdescent",
-    long            => "Omnitron Defense System",
+    long            => "Omnotron Defense System",
     mobStart        => [ 42180, 42179, 42178, 42166 ],
     mobContinue     => [ 42180, 42179, 42178, 42166 ],
     mobEnd          => [ 42180, 42179, 42178, 42166 ],
