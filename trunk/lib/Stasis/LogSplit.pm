@@ -1364,7 +1364,7 @@ our @fingerprints = (
 {
     short           => "dragontwins",
     zone            => "bastionoftwilight",
-    long            => "Valiona & Theralion",
+    long            => "Valiona and Theralion",
     mobStart        => [ 45992, 45993 ],
     mobContinue     => [ 45992, 45993 ],
     mobEnd          => [ 45992, 45993 ],
