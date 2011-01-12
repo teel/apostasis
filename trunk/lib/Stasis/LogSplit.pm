@@ -1478,7 +1478,7 @@ our @fingerprints = (
     mobEnd          => [ 45870, 45871, 45872 ],
     timeout         => 30,
     heroic          => [ ],
-    normal          => [ ]<
+    normal          => [ ],
 },
 
 {
@@ -1490,7 +1490,7 @@ our @fingerprints = (
     mobEnd          => [ 46753 ],
     timeout         => 30,
     heroic          => [ ],
-    normal          => [ ]<
+    normal          => [ ],
 },
 
 ################
