@@ -1457,8 +1457,8 @@ our @fingerprints = (
     short           => "nefarian",
     zone            => "blackwingdescent",
     long            => "Nefarian",
-    mobStart        => [ 41376 ],
-    mobContinue     => [ 41376 ],
+    mobStart        => [ 41270, 41376 ],
+    mobContinue     => [ 41270, 41376 ],
     mobEnd          => [ 41376 ],
     timeout         => 30,
     heroic          => [ ],
@@ -1719,7 +1719,8 @@ sub process {
                     kill  => undef,
                 }
             );
-        } elsif( $fstart{$target_id} && ( !$self->{lockout}{ $fstart{$target_id} } || $self->{lockout}{ $fstart{$target_id} } < $event->{t} - LOCKOUT_TIME ) ) {
+        } elsif( $fstart{$target_id} && ( !$self->{lockout}{ $fstart{$target_id} } || $self->{lockout}{ $fstart{$target_id} } < $event->{t} - LOCKOUT_TIME )
+                 && !(defined($event->{spellid}) && ($event->{spellid} == 2096)) ) { #ignore Mind Vision as a spell cast, may need to add more of these later
             # The target should start a new encounter.
             $self->_bstart(
                 {
