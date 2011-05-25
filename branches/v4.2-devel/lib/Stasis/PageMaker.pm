@@ -301,10 +301,10 @@ sub pageHeader {
 <script type="text/javascript" src="../extras/sws.js"></script>
 <!-- flot -->    
 <!--[if IE]><script language="javascript" type="text/javascript" src="../extras/excanvas.min.js"></script><![endif]-->
-<script language="javascript" type="text/javascript" src="../extras/jquery.js"></script>
-<script language="javascript" type="text/javascript" src="../extras/jquery.flot.js"></script>
-<script language="javascript" type="text/javascript" src="../extras/jquery.flot.selection.js"></script>
-<script language="javascript" type="text/javascript" src="../extras/jquery.flot.crosshair.js"></script> 
+<script language="javascript" type="text/javascript" src="../extras/jquery.min.js"></script>
+<script language="javascript" type="text/javascript" src="../extras/jquery.flot.min.js"></script>
+<script language="javascript" type="text/javascript" src="../extras/jquery.flot.selection.min.js"></script>
+<script language="javascript" type="text/javascript" src="../extras/jquery.flot.crosshair.min.js"></script> 
 </head>
 <body>
 <div class="yui-skin-sam">

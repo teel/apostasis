@@ -1508,6 +1508,90 @@ our @fingerprints = (
     normal          => [ ],
 },
 
+#############
+# Firelands #
+#############
+{
+    short           => "bethtilac",
+    zone            => "firelands",
+    long            => "Beth'tilac",
+    mobStart        => [ 52498 ],
+    mobContinue     => [ 52498, 52581, 52524, 52447 ],
+    mobEnd          => [ 52498 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "rhyolith",
+    zone            => "firelands",
+    long            => "Lord Rhyolith",
+    mobStart        => [ 53258 ],
+    mobContinue     => [ 53258 ],
+    mobEnd          => [ 53258 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "alysrazor",
+    zone            => "firelands",
+    long            => "Alysrazor",
+    mobStart        => [ 54097 ],
+    mobContinue     => [ 54097 ],
+    mobEnd          => [ 54097 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "shannox",
+    zone            => "firelands",
+    long            => "Shannox",
+    mobStart        => [ 53691 ],
+    mobContinue     => [ 53691 ],
+    mobEnd          => [ 53691 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "baleroc",
+    zone            => "firelands",
+    long            => "Baleroc",
+    mobStart        => [ 53494 ],
+    mobContinue     => [ 53494 ],
+    mobEnd          => [ 53494 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "staghelm",
+    zone            => "firelands",
+    long            => "Majordomo Staghelm",
+    mobStart        => [ 52571 ],
+    mobContinue     => [ 52571 ],
+    mobEnd          => [ 52571 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "ragnaros",
+    zone            => "firelands",
+    long            => "Ragnaros",
+    mobStart        => [ 52409 ],
+    mobContinue     => [ 52409 ],
+    mobEnd          => [ 52409 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+
+
+
 );
 
 # Create and invert the %hfingerprints hash.
