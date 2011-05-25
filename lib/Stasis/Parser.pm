@@ -50,6 +50,7 @@ use Carp;
 use Stasis::Event qw/%action_map/;
 use Stasis::Parser::V1;
 use Stasis::Parser::V2;
+use Stasis::Parser::V4.2;
 
 =head3 new
 
@@ -60,13 +61,13 @@ Takes three parameters.
 =item logger
 
 The name of the logger. This value defaults to "You". The name of 
-the logger is not required for version 2 logs (since they contain
-the logger's real name).
+the logger is not required for version 2 or later logs (since they
+contain the logger's real name).
 
 =item version
 
-"1" or "2" for pre-2.4 and post-2.4 logs respectively. The version
-defaults to 2.
+"1" or "2", "3" for pre-2.4, post-2.4, and post-4.2 logs respectively. 
+The version defaults to 3.
 
 =item year
 
@@ -91,11 +92,15 @@ sub new {
     
     $params{year} ||= strftime "%Y", localtime;
     $params{logger} ||= "You";
-    $params{version} = 2 if !$params{version} || $params{version} != 1;
+    $params{version} = 3 if !$params{version} || !($params{version} == 1 || $params{version} == 2);
     
     if( $class eq "Stasis::Parser" ) {
-        $class = $params{version} == 1 ? "Stasis::Parser::V1" : "Stasis::Parser::V2";
+        if ($params{version} == 1) {$class = "Stasis::Parser::V1"}
+        elsif ($params{version} == 2) {$class = "Stasis::Parser::V2"}
+        else {$class = "Stasis::Parser::V4.2"}
     }
+    #Actually superfluous code up there - defaulting to 3 in multiple cases
+    #Module version named after WoW version
     
     bless {
         year => $params{year} || strftime( "%Y", localtime ),
