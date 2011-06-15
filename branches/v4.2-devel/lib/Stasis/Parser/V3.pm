@@ -56,11 +56,11 @@ sub parse {
             actor               => 0,
             actor_name          => "",
             actor_relationship  => 0,
-            actor_relationship2 => 0,
+            actor_raidflags     => 0,
             target              => 0,
             target_name         => "",
             target_relationship => 0,
-            target_relationship2 => 0,
+            target_raidflags    => 0,
         };
     }
 
@@ -72,11 +72,11 @@ sub parse {
         actor               => shift @col,
         actor_name          => shift @col || "",
         actor_relationship  => hex shift @col,
-        actor_relationship2 => hex shift @col,
+        actor_raidflags     => hex shift @col,
         target              => shift @col,
         target_name         => shift @col || "",
         target_relationship => hex shift @col,
-        target_relationship2 => hex shift @col,
+        target_raidflags    => hex shift @col,
         t                   => $t,
     };
 
