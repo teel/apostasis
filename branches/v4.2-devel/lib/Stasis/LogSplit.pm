@@ -1507,6 +1507,17 @@ our @fingerprints = (
     heroic          => [ ],
     normal          => [ ],
 },
+{
+    short           => "occuthar",
+    zone            => "baradinhold",
+    long            => "Occu'thar",
+    mobStart        => [ 52363 ],
+    mobContinue     => [ 52363 ],
+    mobEnd          => [ 52363 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
 
 #############
 # Firelands #
@@ -1515,7 +1526,7 @@ our @fingerprints = (
     short           => "bethtilac",
     zone            => "firelands",
     long            => "Beth'tilac",
-    mobStart        => [ 52498 ],
+    mobStart        => [ 52498 ], #could also be 52675?
     mobContinue     => [ 52498, 52581, 52524, 52447 ],
     mobEnd          => [ 52498 ],
     timeout         => 30,
@@ -1537,7 +1548,7 @@ our @fingerprints = (
     short           => "alysrazor",
     zone            => "firelands",
     long            => "Alysrazor",
-    mobStart        => [ 54097 ],
+    mobStart        => [ 54097 ], #could also be 54382, 52530
     mobContinue     => [ 54097 ],
     mobEnd          => [ 54097 ],
     timeout         => 30,
@@ -1570,7 +1581,7 @@ our @fingerprints = (
     short           => "staghelm",
     zone            => "firelands",
     long            => "Majordomo Staghelm",
-    mobStart        => [ 52571 ],
+    mobStart        => [ 52571 ], #could also be 54015, 52801
     mobContinue     => [ 52571 ],
     mobEnd          => [ 52571 ],
     timeout         => 30,
