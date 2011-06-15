@@ -19,6 +19,9 @@ I wrote these instructions on a mostly stock Mac (the only significant modificat
 
   * At this point setup is complete. For each log file you wish to run, you need to call "stasis add" with the appropriate options and send it the file over standard input. Do this in a terminal:
 {{{
+# 4.2 log (a.k.a v3 - it is usually better to leave the -ver flag off as it will default to the latest)
+./stasis add -dir /home/jqpublic/sws -ver 3 -file /path/to/log/file
+
 # 2.4 log (a.k.a v2) -- name of logger is not needed:
 ./stasis add -dir /home/jqpublic/sws -ver 2 -file /path/to/log/file
 
