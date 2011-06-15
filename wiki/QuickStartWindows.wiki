@@ -15,6 +15,9 @@ display.
 
   * At this point setup is complete. For each log file you wish to run, you need to call "`stasis add`" with the appropriate options and send it the file over standard input. Open a command prompt and cd to the directory you checked the code out to. Then do something like one of the following:
 {{{ 
+# 4.2 log (a.k.a v3 - it is usually better to leave the -ver flag off as it will default to the latest)
+perl stasis add -dir C:\stasicl\www -ver 3 -file C:\path\to\log\file
+
 # 2.4 log (a.k.a v2) -- name of logger is not needed:
 perl stasis add -dir C:\stasiscl\www -ver 2 -file C:\path\to\log\file
 
