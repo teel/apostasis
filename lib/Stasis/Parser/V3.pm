@@ -21,7 +21,7 @@
 # OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF 
 # ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-package Stasis::Parser::V4.2;
+package Stasis::Parser::V3;
 
 use strict;
 use warnings;
@@ -50,15 +50,17 @@ sub parse {
     # Pull the stamp out.
     my ($t, @col) = $self->_split( $line );
 
-    if( !$t || @col < 7 ) {
+    if( !$t || @col < 9 ) {
         return {
             action              => 0,
             actor               => 0,
             actor_name          => "",
             actor_relationship  => 0,
+            actor_relationship2 => 0,
             target              => 0,
             target_name         => "",
             target_relationship => 0,
+            target_relationship2 => 0,
         };
     }
 
@@ -70,9 +72,11 @@ sub parse {
         actor               => shift @col,
         actor_name          => shift @col || "",
         actor_relationship  => hex shift @col,
+        actor_relationship2 => hex shift @col,
         target              => shift @col,
         target_name         => shift @col || "",
         target_relationship => hex shift @col,
+        target_relationship2 => hex shift @col,
         t                   => $t,
     };
 

@@ -85,8 +85,8 @@ B<-region>    If present, sets the prefix to the armory address.
            eu.wowarmory.com site, for example.
            
 B<-version>   Either 1 or 2. Pre-2.4 combatlogs should be parsed with
-           version = 1, post-2.4 combatlogs with 2. Default is '2',
-           the new post-2.4 style.
+           version = 1, post-2.4 combatlogs with 2, post-4.2 combatlogs
+           with 3. Default is '3', the new post-4.2 style.
 
 B<-logger>    Name of the logger, optional argument only used when parsing
            version 1 combat logs. Default is 'You'.
@@ -166,7 +166,7 @@ use HTML::Entities;
 use Getopt::Long;
 
 ## OPTIONS ##
-my $opt_version = 2;
+my $opt_version = 3;
 my $opt_minlength;
 my $opt_sfile;
 my $opt_dir = ".";

@@ -50,7 +50,7 @@ use Carp;
 use Stasis::Event qw/%action_map/;
 use Stasis::Parser::V1;
 use Stasis::Parser::V2;
-use Stasis::Parser::V4.2;
+use Stasis::Parser::V3;
 
 =head3 new
 
@@ -97,7 +97,7 @@ sub new {
     if( $class eq "Stasis::Parser" ) {
         if ($params{version} == 1) {$class = "Stasis::Parser::V1"}
         elsif ($params{version} == 2) {$class = "Stasis::Parser::V2"}
-        else {$class = "Stasis::Parser::V4.2"}
+        else {$class = "Stasis::Parser::V3"}
     }
     #Actually superfluous code up there - defaulting to 3 in multiple cases
     #Module version named after WoW version
