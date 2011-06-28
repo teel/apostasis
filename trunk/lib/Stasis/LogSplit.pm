@@ -1507,6 +1507,101 @@ our @fingerprints = (
     heroic          => [ ],
     normal          => [ ],
 },
+{
+    short           => "occuthar",
+    zone            => "baradinhold",
+    long            => "Occu'thar",
+    mobStart        => [ 52363 ],
+    mobContinue     => [ 52363 ],
+    mobEnd          => [ 52363 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+#############
+# Firelands #
+#############
+{
+    short           => "bethtilac",
+    zone            => "firelands",
+    long            => "Beth'tilac",
+    mobStart        => [ 52498 ], #could also be 52675?
+    mobContinue     => [ 52498, 52581, 52524, 52447 ],
+    mobEnd          => [ 52498 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "rhyolith",
+    zone            => "firelands",
+    long            => "Lord Rhyolith",
+    mobStart        => [ 53258 ],
+    mobContinue     => [ 53258 ],
+    mobEnd          => [ 53258 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "alysrazor",
+    zone            => "firelands",
+    long            => "Alysrazor",
+    mobStart        => [ 54097 ], #could also be 54382, 52530
+    mobContinue     => [ 54097 ],
+    mobEnd          => [ 54097 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "shannox",
+    zone            => "firelands",
+    long            => "Shannox",
+    mobStart        => [ 53691 ],
+    mobContinue     => [ 53691 ],
+    mobEnd          => [ 53691 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "baleroc",
+    zone            => "firelands",
+    long            => "Baleroc",
+    mobStart        => [ 53494 ],
+    mobContinue     => [ 53494 ],
+    mobEnd          => [ 53494 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "staghelm",
+    zone            => "firelands",
+    long            => "Majordomo Staghelm",
+    mobStart        => [ 52571 ], #could also be 54015, 52801
+    mobContinue     => [ 52571 ],
+    mobEnd          => [ 52571 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+{
+    short           => "ragnaros",
+    zone            => "firelands",
+    long            => "Ragnaros",
+    mobStart        => [ 52409 ],
+    mobContinue     => [ 52409 ],
+    mobEnd          => [ 52409 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+
+
 
 );
 
@@ -1617,7 +1712,6 @@ sub process_timeout_check {
         } else {
             # This fingerprint timed out without ending.
             # Record it as an attempt.
-            
             $self->_bend(
                 {
                     short => $vboss->{short},
@@ -1628,7 +1722,6 @@ sub process_timeout_check {
                 }
             );
         }
-        
         # 1 means timeout.
         return 1;
     }
@@ -1653,7 +1746,6 @@ sub process {
         if( ! $self->process_timeout_check( $event ) && ( ($fcontinue{$actor_id} && $fcontinue{$actor_id} eq $kboss) || ($fcontinue{$target_id} && $fcontinue{$target_id} eq $kboss) ) ) {
             # We should continue this encounter.
             $vboss->{end} = $event->{t};
-            
             # Also possibly end it.
             if( ($event->{action} == UNIT_DIED || $event->{action} == UNIT_DESTROYED) && $fend{$target_id} && $fend{$target_id} eq $kboss ) {
                 $vboss->{dead}{$target_id} = 1;
