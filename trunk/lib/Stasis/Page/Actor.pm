@@ -246,12 +246,12 @@ sub page {
         my $n = $self->{index}->actorname($MOB);
         $r =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
         $n =~ s/([^A-Za-z0-9])/sprintf("%%%02X", ord($1))/seg;
-		my $reg='www';
+		my $reg='us'; #set us.battle.net as default.
 		#use region information if set (e.g. eu armory)
 		if ($self->{region}) {
 			$reg = $self->{region};
 		}
-		push @summaryRows, "Armory" => "<a href=\"http://$reg.wowarmory.com/character-sheet.xml?r=$r&n=$n\" target=\"swsar_$n\">$displayName &#187;</a>";
+		push @summaryRows, "Armory" => "<a href=\"http://$reg.battle.net/wow/en/character/$r/$n/advanced\" target=\"swsar_$n\">$displayName &#187;</a>";
     }
     
     # Presence

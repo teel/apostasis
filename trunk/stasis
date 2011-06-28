@@ -82,7 +82,9 @@ B<-server>    If present, Armory links will be included using this server.
 
 B<-region>    If present, sets the prefix to the armory address. 
            -region=eu will make the parsed logs link to the 
-           eu.wowarmory.com site, for example.
+           eu.battle.net site, for example. The default is 'us'.
+           This may not work for non-English regions - report bugs with
+           armory links to http://code.google.com/p/apostasis/
            
 B<-version>   Either 1 or 2. Pre-2.4 combatlogs should be parsed with
            version = 1, post-2.4 combatlogs with 2, post-4.2 combatlogs
