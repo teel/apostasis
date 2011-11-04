@@ -49,7 +49,7 @@ sub new {
 sub set {
     my ( $self, %params ) = @_;
 
-    foreach my $key qw/boss raid exts index collapse/ {
+    foreach my $key (qw/boss raid exts index collapse/) {
         $self->{$key} = $params{$key};
     }
 }
