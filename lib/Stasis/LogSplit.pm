@@ -1660,7 +1660,7 @@ sub register {
     
     # Looks for spells to determine normal/heroic
     $ed->add(
-        qw/SPELL_DAMAGE SPELL_PERIODIC_DAMAGE SPELL_CAST_SUCCESS/,
+        qw/SPELL_DAMAGE SPELL_PERIODIC_DAMAGE SPELL_CAST_SUCCESS SPELL_AURA_APPLIED SPELL_AURA_REMOVED/,
         sub { $self->process_heroic( @_ ) }
     );
 }
