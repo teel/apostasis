@@ -59,6 +59,7 @@ our %zones = (
     "blackwingdescent" => "Blackwing Descent",
     "bastionoftwilight" => "Bastion of Twilight",
     "fourwinds" => "Throne of the Four Winds",
+	"dragonsoul" => "Dragon Soul",
 );
 
 # Fingerprints of various boss encounters.
@@ -1600,8 +1601,105 @@ our @fingerprints = (
     normal          => [ 101238, 99399, 99235, 100178, 100181, 99236, 99162, 100175, 100383, 98237, 101246, 98313, 100877, 98953, 98951, 100880, 100883, 98952, 98716, 100896 ],
 },
 
+###############
+# Dragon Soul #
+###############
 
+{
+    short           => "morchok",
+    zone            => "dragonsoul",
+    long            => "Morchok",
+    mobStart        => [ 55265 ],
+    mobContinue     => [ 55265 ],
+    mobEnd          => [ 55265 ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
 
+{
+    short           => "zonozz",
+    zone            => "dragonsoul",
+    long            => "Warlord Zon'ozz",
+    mobStart        => [ 55308 ],
+    mobContinue     => [ 55308 ],
+    mobEnd          => [ 55308 ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
+
+{
+    short           => "yorsahj",
+    zone            => "dragonsoul",
+    long            => "Yor'sahj the Unsleeping",
+    mobStart        => [ 55312 ],
+    mobContinue     => [ 55312, 55864, 55866, 55865, 55867 ],
+    mobEnd          => [ 55312 ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
+
+{
+    short           => "hagara",
+    zone            => "dragonsoul",
+    long            => "Hagara the Stormbinder",
+    mobStart        => [ 55689 ],
+    mobContinue     => [ 55689, 56700 ],
+    mobEnd          => [ 55689 ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
+
+{
+    short           => "ultraxion",
+    zone            => "dragonsoul",
+    long            => "Ultraxion",
+    mobStart        => [ 55294 ],
+    mobContinue     => [ 55294 ],
+    mobEnd          => [ 55294 ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
+
+{
+    short           => "blackhorn",
+    zone            => "dragonsoul",
+    long            => "Warmaster Blackhorn",
+    mobStart        => [ 56427, 56781 ],
+    mobContinue     => [ 56854, 56848, 56923, 56781, 56855, 56587 ],
+    mobEnd          => [ 56427 ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
+
+{
+    short           => "spine",
+    zone            => "dragonsoul",
+    long            => "Spine of Deathwing",
+    mobStart        => [  ],
+    mobContinue     => [  ],
+    mobEnd          => [  ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
+
+{
+    short           => "madness",
+    zone            => "dragonsoul",
+    long            => "Madness of Deathwing",
+    mobStart        => [  ],
+    mobContinue     => [  ],
+    mobEnd          => [  ],
+    timeout         => 30,
+    heroic          => [  ],
+    normal          => [  ],
+},
 
 );
 
