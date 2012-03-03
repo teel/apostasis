@@ -1519,6 +1519,17 @@ our @fingerprints = (
     heroic          => [ ],
     normal          => [ ],
 },
+{
+    short           => "alizabal",
+    zone            => "baradinhold",
+    long            => "Alizabal",
+    mobStart        => [ 55869 ],
+    mobContinue     => [ 55869 ],
+    mobEnd          => [ 55869 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
 
 #############
 # Firelands #
@@ -1649,7 +1660,7 @@ our @fingerprints = (
     mobContinue     => [ 55689, 56700 ],
     mobEnd          => [ 55689 ],
     timeout         => 30,
-    heroic          => [  ],
+    heroic          => [ 109201, 109202, 109325 ],
     normal          => [  ],
 },
 
@@ -1661,7 +1672,7 @@ our @fingerprints = (
     mobContinue     => [ 55294 ],
     mobEnd          => [ 55294 ],
     timeout         => 30,
-    heroic          => [  ],
+    heroic          => [ 110068, 110069, 110078, 110079 ],
     normal          => [  ],
 },
 
