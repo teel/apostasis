@@ -1672,7 +1672,7 @@ our @fingerprints = (
     mobContinue     => [ 55294 ],
     mobEnd          => [ 55294 ],
     timeout         => 30,
-    heroic          => [ 110068, 110069, 110078, 110079 ],
+    heroic          => [ 109416, 109417, 110068, 110069, 110078, 110079 ],
     normal          => [  ],
 },
 
@@ -1769,7 +1769,7 @@ sub register {
     
     # Looks for spells to determine normal/heroic
     $ed->add(
-        qw/SPELL_DAMAGE SPELL_PERIODIC_DAMAGE SPELL_CAST_SUCCESS SPELL_AURA_APPLIED SPELL_AURA_REMOVED/,
+        qw/SPELL_DAMAGE SPELL_PERIODIC_DAMAGE SPELL_CAST_START SPELL_CAST_SUCCESS SPELL_AURA_APPLIED SPELL_AURA_REMOVED/,
         sub { $self->process_heroic( @_ ) }
     );
 }
