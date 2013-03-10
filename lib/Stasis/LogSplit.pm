@@ -60,6 +60,10 @@ our %zones = (
     "bastionoftwilight" => "Bastion of Twilight",
     "fourwinds" => "Throne of the Four Winds",
     "dragonsoul" => "Dragon Soul",
+    "heartoffear" => "Heart of Fear",
+    "mogushan" => "Mogu'shan Vaults",
+    "endlessspring" => "Terrace of Endless Spring",
+    "throneofthunder" => "Throne of Thunder",
 );
 
 # Fingerprints of various boss encounters.
@@ -1710,6 +1714,370 @@ our @fingerprints = (
     timeout         => 30,
     heroic          => [ 108601, 108649, 110042, 110043 ],
     normal          => [ 105841, 109625 ],
+},
+
+#################
+# Heart of Fear #
+#################
+
+{
+    short           => "zorlok",
+    zone            => "heartoffear",
+    long            => "Imperial Vizier Zor'lok",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "tayak",
+    zone            => "heartoffear",
+    long            => "Blade Lord Ta'yak",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "garalon",
+    zone            => "heartoffear",
+    long            => "Garalon",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "meljarak",
+    zone            => "heartoffear",
+    long            => "Wind Lord Mel'jarak",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "unsok",
+    zone            => "heartoffear",
+    long            => "Amber-Shaper Un'sok",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "shekzeer",
+    zone            => "heartoffear",
+    long            => "Grand Empress Shek'zeer",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+####################
+# Mogu'shan Vaults #
+####################
+
+{
+    short           => "stoneguard",
+    zone            => "mogushan",
+    long            => "The Stone Guard",
+    mobStart        => [ 59915, 60043, 60047, 60051 ],
+    mobContinue     => [ 59915, 60043, 60047, 60051 ],
+    mobEnd          => [ 59915, 60043, 60047, 60051 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "feng",
+    zone            => "mogushan",
+    long            => "Feng the Accursed",
+    mobStart        => [ 60009 ],
+    mobContinue     => [ 60009 ],
+    mobEnd          => [ 60009 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "garajal",
+    zone            => "mogushan",
+    long            => "Gara'jal the Spiritbinder",
+    mobStart        => [ 60143 ],
+    mobContinue     => [ 60143 ],
+    mobEnd          => [ 60143 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "spiritkings",
+    zone            => "mogushan",
+    long            => "The Spirit Kings",
+    mobStart        => [ 60701, 60708, 60709, 60710 ],
+    mobContinue     => [ 60701, 60708, 60709, 60710 ],
+    mobEnd          => [ 60701, 60708, 60709, 60710 ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "elegon",
+    zone            => "mogushan",
+    long            => "Elegon",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "willofemperor",
+    zone            => "mogushan",
+    long            => "Will of the Emperor",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+#############################
+# Terrace of Endless Spring #
+#############################
+
+{
+    short           => "protectors",
+    zone            => "endlessspring",
+    long            => "Protectors of the Endless",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "tsulong",
+    zone            => "endlessspring",
+    long            => "Tsulong",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "leishi",
+    zone            => "endlessspring",
+    long            => "Lei Shi",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "shaoffear",
+    zone            => "endlessspring",
+    long            => "Sha of Fear",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+#####################
+# Throne of Thunder #
+#####################
+
+{
+    short           => "jinrokh",
+    zone            => "throneofthunder",
+    long            => "Jin'rokh the Breaker",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "horridon",
+    zone            => "throneofthunder",
+    long            => "Horridon",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "councilelders",
+    zone            => "throneofthunder",
+    long            => "Council of Elders",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "tortos",
+    zone            => "throneofthunder",
+    long            => "Tortos",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "megaera",
+    zone            => "throneofthunder",
+    long            => "Megaera",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "jikun",
+    zone            => "throneofthunder",
+    long            => "Ji-Kun",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "durumu",
+    zone            => "throneofthunder",
+    long            => "Durumu the Forgotten",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "primordius",
+    zone            => "throneofthunder",
+    long            => "Primordius",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "darkanimus",
+    zone            => "throneofthunder",
+    long            => "Dark Animus",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "ironqon",
+    zone            => "throneofthunder",
+    long            => "Iron Qon",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "twinconsorts",
+    zone            => "throneofthunder",
+    long            => "Twin Consorts",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "leishen",
+    zone            => "throneofthunder",
+    long            => "Lei Shen",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
+},
+
+{
+    short           => "raden",
+    zone            => "throneofthunder",
+    long            => "Ra-den",
+    mobStart        => [ ],
+    mobContinue     => [ ],
+    mobEnd          => [ ],
+    timeout         => 30,
+    heroic          => [ ],
+    normal          => [ ],
 },
 
 );
